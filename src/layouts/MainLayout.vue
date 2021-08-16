@@ -17,7 +17,7 @@
         <!--            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">-->
         <!--          </q-avatar>-->
 
-        <q-toolbar-title>CRM Admin</q-toolbar-title>
+        <q-toolbar-title>Nombre del verificentro + ID</q-toolbar-title>
         <q-btn
           class="q-mr-xs"
           flat

@@ -664,6 +664,9 @@
             }
         },
         methods: {
+          imprime(){
+            console.log("HOlaaa")
+          },
             SaveImage(type) {
                 const linkSource = this.$refs[type].getDataURL();
                 const downloadLink = document.createElement('a');
