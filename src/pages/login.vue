@@ -109,9 +109,9 @@ export default {
       username: "Verificentro C-003",
       orgName: "Org3",
     };
-    //vm.createUser(v1);
+    vm.createUser(v1);
     vm.createUser(v2);
-    //vm.createUser(v3);
+    vm.createUser(v3);
     particlesJS("particles-js", {
       particles: {
         number: {

@@ -18,7 +18,7 @@
           </q-card-section>
         </q-card>
       </div>
-      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+      <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
         <q-card>
           <q-card-section
             :class="$q.dark.isActive ? 'green_dark' : 'bg-green-8'"
@@ -31,27 +31,6 @@
               </div>
               <div class="col-2">
                 <q-icon size="62px" name="far fa-dot-circle" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-        <q-card>
-          <q-card-section
-            :class="$q.dark.isActive ? 'orange_dark' : 'bg-orange-9'"
-            class="text-white"
-          >
-            <div class="row">
-              <div class="col-10">
-                <div class="text-h6">% Change</div>
-                <div class="text-h5">
-                  <q-icon name="arrow_downward" />
-                  2%
-                </div>
-              </div>
-              <div class="col-2">
-                <q-icon size="62px" name="compare_arrows" />
               </div>
             </div>
           </q-card-section>
@@ -118,18 +97,20 @@
                     </q-item-section>
                   </q-item>
                 </q-list>
-                <center><q-btn
-                  color="primary"
-                  icon-right="archive"
-                  label="Registrar Auto"
-                  no-caps
-                  @click="exportTable"
-                /></center>
+                <center>
+                  <q-btn
+                    color="primary"
+                    icon-right="archive"
+                    label="Registrar Auto"
+                    no-caps
+                    @click="exportTable"
+                  />
+                </center>
               </q-form>
             </q-card-section>
           </q-card>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
           <q-card flat bordered class="">
             <q-card-section class="row">
               <div class="text-h6 col-12">
@@ -148,17 +129,18 @@
             </q-card-section>
 
             <q-separator inset></q-separator>
-
             <q-card-section>
               <q-form>
                 <q-list>
                   <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Nombre del Técnico</q-item-label>
+                      <q-item-label class="q-pb-xs"
+                        >Nombre del Técnico</q-item-label
+                      >
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.marca"
+                        v-model="deposit.tecnicoid"
                         label="Nombre y ID"
                       />
                     </q-item-section>
@@ -169,29 +151,33 @@
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.modelo"
+                        v-model="deposit.odometroid"
                         label="ID"
                       />
                     </q-item-section>
                   </q-item>
                   <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Monóxido de Carbono</q-item-label>
+                      <q-item-label class="q-pb-xs"
+                        >Monóxido de Carbono</q-item-label
+                      >
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.placas"
+                        v-model="deposit.co"
                         label="CO Registrado"
                       />
                     </q-item-section>
                   </q-item>
                   <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Dióxido de Carbono</q-item-label>
+                      <q-item-label class="q-pb-xs"
+                        >Dióxido de Carbono</q-item-label
+                      >
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.placas"
+                        v-model="deposit.co2"
                         label="CO2 Registrado"
                       />
                     </q-item-section>
@@ -202,206 +188,103 @@
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.placas"
+                        v-model="deposit.o2"
                         label="O2 Registrado"
                       />
                     </q-item-section>
                   </q-item>
-                   <q-item>
+                  <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Oxígeno de Nitrógeno</q-item-label>
+                      <q-item-label class="q-pb-xs"
+                        >Oxígeno de Nitrógeno</q-item-label
+                      >
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.placas"
+                        v-model="deposit.noxppm"
                         label="NOX ppm"
                       />
                     </q-item-section>
                   </q-item>
-                   <q-item>
+                  <q-item>
                     <q-item-section>
                       <q-item-label class="q-pb-xs">Carga HP</q-item-label>
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.placas"
+                        v-model="deposit.cargahp"
                         label="HP Registrado"
                       />
                     </q-item-section>
                   </q-item>
                 </q-list>
-                <center><q-btn
-                  color="primary"
-                  icon-right="archive"
-                  label="Registrar Auto"
-                  no-caps
-                  @click="exportTable"
-                /></center>
+                <center>
+                  <q-btn
+                    color="primary"
+                    icon-right="archive"
+                    label="Registrar Auto"
+                    no-caps
+                    @click="addCar"
+                  />
+                </center>
               </q-form>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-          <q-card flat bordered class="">
-            <q-card-section class="row">
-              <div class="text-h6 col-12">
-                Sales vs Quota
-                <q-btn
-                  flat
-                  dense
-                  icon="fas fa-download"
-                  class="float-right"
-                  @click="SaveImage('gauge')"
-                  :color="!$q.dark.isActive ? 'grey-8' : 'white'"
-                >
-                  <q-tooltip>Download</q-tooltip>
-                </q-btn>
-              </div>
-            </q-card-section>
-
-            <q-separator inset></q-separator>
-
-            <q-card-section>
-              <IEcharts
-                :option="gaugeOptions"
-                ref="gauge"
-                :resizable="true"
-                style="height: 220px"
-              />
             </q-card-section>
           </q-card>
         </div>
       </div>
     </div>
     <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
-      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-        <q-card flat bordered class="">
-          <q-card-section>
-            <div class="text-h6">
-              Key Competitors
-              <q-btn
-                flat
-                dense
-                icon="fas fa-download"
-                class="float-right"
-                @click="SaveImage('pie')"
-                :color="!$q.dark.isActive ? 'grey-8' : 'white'"
-              >
-                <q-tooltip>Download</q-tooltip>
-              </q-btn>
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <q-card>
+          <q-card-section
+            :class="$q.dark.isActive ? 'orange_dark' : 'bg-orange-9'"
+            class="text-white"
+          >
+            <div class="row">
+              <div class="col-10">
+                <div class="text-h6">% Change</div>
+                <div class="text-h5">
+                  <q-icon name="arrow_downward" />
+                  2%
+                </div>
+              </div>
+              <div class="col-2">
+                <q-icon size="62px" name="compare_arrows" />
+              </div>
             </div>
-          </q-card-section>
-
-          <q-separator inset></q-separator>
-
-          <q-card-section>
-            <IEcharts
-              ref="pie"
-              :option="pieOptions"
-              :resizable="true"
-              style="height: 270px"
-            />
-          </q-card-section>
-        </q-card>
-      </div>
-      <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-        <q-card flat bordered class="">
-          <q-card-section>
-            <div class="text-h6">
-              Sales Pipeline by Sales Rep
-              <q-btn
-                flat
-                dense
-                icon="fas fa-download"
-                class="float-right"
-                @click="SaveImage('stack_bar')"
-                :color="!$q.dark.isActive ? 'grey-8' : 'white'"
-              >
-                <q-tooltip>Download</q-tooltip>
-              </q-btn>
-            </div>
-          </q-card-section>
-
-          <q-separator inset></q-separator>
-
-          <q-card-section>
-            <IEcharts
-              ref="stack_bar"
-              :option="stackedBarOptions"
-              :resizable="true"
-              style="height: 270px"
-            />
           </q-card-section>
         </q-card>
       </div>
     </div>
     <div class="row q-col-gutter-sm q-ma-xs">
-      <div class="col-12">
-        <q-card flat bordered class="bg-white">
-          <q-table
-            title="All Activities"
-            :data="data"
-            :hide-header="mode === 'grid'"
-            :columns="columns"
-            row-key="name"
-            :grid="mode === 'grid'"
-            :filter="filter"
-            :pagination.sync="pagination"
-            :class="$q.dark.isActive ? 'text-white' : 'text-grey-8'"
-          >
-            <template v-slot:top-right="props">
-              <q-input
-                outlined
-                dense
-                debounce="300"
-                v-model="filter"
-                placeholder="Search"
-              >
-                <template v-slot:append>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-
+      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+        <q-card flat bordered class="">
+          <q-card-section class="row">
+            <div class="text-h6 col-12">
+              Sales vs Quota
               <q-btn
                 flat
-                round
                 dense
-                :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                @click="props.toggleFullscreen"
-                v-if="mode === 'list'"
+                icon="fas fa-download"
+                class="float-right"
+                @click="SaveImage('gauge')"
+                :color="!$q.dark.isActive ? 'grey-8' : 'white'"
               >
-                <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
-                  >{{
-                    props.inFullscreen ? "Exit Fullscreen" : "Toggle Fullscreen"
-                  }}
-                </q-tooltip>
+                <q-tooltip>Download</q-tooltip>
               </q-btn>
+            </div>
+          </q-card-section>
 
-              <q-btn
-                flat
-                round
-                dense
-                :icon="mode === 'grid' ? 'list' : 'grid_on'"
-                @click="
-                  mode = mode === 'grid' ? 'list' : 'grid';
-                  separator = mode === 'grid' ? 'none' : 'horizontal';
-                "
-                v-if="!props.inFullscreen"
-              >
-                <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
-                  >{{ mode === "grid" ? "List" : "Grid" }}
-                </q-tooltip>
-              </q-btn>
+          <q-separator inset></q-separator>
 
-              <q-btn
-                color="primary"
-                icon-right="archive"
-                label="Export to csv"
-                no-caps
-                @click="exportTable"
-              />
-            </template>
-          </q-table>
+          <q-card-section>
+            <IEcharts
+              :option="gaugeOptions"
+              ref="gauge"
+              :resizable="true"
+              style="height: 220px"
+            />
+          </q-card-section>
         </q-card>
       </div>
     </div>
@@ -411,7 +294,7 @@
 <script>
 import Vue from "vue";
 import IEcharts from "vue-echarts-v3/src/full.js";
-import { exportFile } from "quasar";
+import axios from "axios";
 
 Vue.component("IEcharts", IEcharts);
 
@@ -429,6 +312,7 @@ function wrapCsvValue(val, formatFn) {
 export default {
   data() {
     return {
+      autoId: 0,
       deposit: {},
       options: [
         "National Bank",
@@ -787,35 +671,26 @@ export default {
       downloadLink.download = type + ".png";
       downloadLink.click();
     },
-    exportTable() {
-      // naive encoding to csv format
-      const content = [this.columns.map((col) => wrapCsvValue(col.label))]
-        .concat(
-          this.data.map((row) =>
-            this.columns
-              .map((col) =>
-                wrapCsvValue(
-                  typeof col.field === "function"
-                    ? col.field(row)
-                    : row[col.field === void 0 ? col.name : col.field],
-                  col.format
-                )
-              )
-              .join(",")
-          )
-        )
-        .join("\r\n");
-
-      const status = exportFile("activity.csv", content, "text/csv");
-
-      if (status !== true) {
-        this.$q.notify({
-          message: "Browser denied file download...",
-          color: "negative",
-          icon: "warning",
-        });
-      }
-    },
+    addCar() {
+      let vm = this;
+      let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjkyMDEwMjQsInVzZXJuYW1lIjoidGUyc3QiLCJvcmdOYW1lIjoiT3JnMSIsImlhdCI6MTYyOTE2NTAyNH0.VOjI3UQURv4ZeBKPr6htuFewkUd_FKE5XInV8UrN5Gk";
+      //vm.deposit.id = vm.autoId++;
+      vm.deposit.id = 2;
+      vm.deposit.status = "Pendiente de validar";
+      let arg = ["{\"id\":\"vm.deposit.id\",\"marca\":\"VW\",\"modelo\":\"Jetta 2011\",\"placas\":\"398-SKT\",\"verificentroid\":\"V1\",\"tecnicoid\":\"T1\",\"odometroid\":\"Od1\",\"validadorid\":\"V4\",\"status\":\"Calcomania 0\",\"co\":\"0.1\",\"co2\":\"14.7\",\"o2\":\"0.1\",\"noxppm\":\"106\",\"cargahp\":\"12.2\"}"]
+      console.log(vm.deposit)
+      let body = {
+        "fcn": "CreateCar",
+        "chaincodeName":"fabcar",
+        "channelName": "mychannel",
+        "args": arg
+      };
+      let config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
+      console.log("Deposit "+ vm.deposit);
+      axios.post("http://localhost:4000/channels/mychannel/chaincodes/fabcar", body,config).then(console.log).catch(console.log)
+    }
   },
 };
 </script>
