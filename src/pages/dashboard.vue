@@ -87,6 +87,86 @@
                   </q-item>
                   <q-item>
                     <q-item-section>
+                      <q-item-label class="q-pb-xs">Año</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.anio"
+                        label="Año"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs">Placas</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.placas"
+                        label="Placas"
+                      />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <center>
+                  
+                  <q-btn
+                    color="primary"
+                    icon-right="archive"
+                    label="Validar Auto"
+                    no-caps
+                    @click="validarAuto"
+                  />
+                </center>
+              </q-form>
+            </q-card-section>
+          </q-card>
+          <br>
+          <q-card flat bordered class="">
+            <q-card-section class="row">
+              <div class="text-h6 col-12">
+                Verifición de Multas
+                <q-btn
+                  flat
+                  dense
+                  class="float-right"
+                  :color="!$q.dark.isActive ? 'grey-8' : 'white'"
+                >
+                <img src="../../assets/success.svg" height="35"/>
+                </q-btn>
+              </div>
+            </q-card-section>
+
+            <q-separator inset></q-separator>
+
+            <q-card-section>
+              <q-separator inset></q-separator>
+              <q-form>
+                <q-list>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs">Marca</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.marca"
+                        label="Marca"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs">Modelo</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.modelo"
+                        label="Modelo"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
                       <q-item-label class="q-pb-xs">Placas</q-item-label>
                       <q-input
                         dense
@@ -101,15 +181,16 @@
                   <q-btn
                     color="primary"
                     icon-right="archive"
-                    label="Registrar Auto"
+                    label="Validar Auto"
                     no-caps
-                    @click="exportTable"
+                    @click="validarAuto"
                   />
                 </center>
               </q-form>
             </q-card-section>
           </q-card>
         </div>
+        
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
           <q-card flat bordered class="">
             <q-card-section class="row">
@@ -233,61 +314,8 @@
         </div>
       </div>
     </div>
-    <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
-      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <q-card>
-          <q-card-section
-            :class="$q.dark.isActive ? 'orange_dark' : 'bg-orange-9'"
-            class="text-white"
-          >
-            <div class="row">
-              <div class="col-10">
-                <div class="text-h6">% Change</div>
-                <div class="text-h5">
-                  <q-icon name="arrow_downward" />
-                  2%
-                </div>
-              </div>
-              <div class="col-2">
-                <q-icon size="62px" name="compare_arrows" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-    <div class="row q-col-gutter-sm q-ma-xs">
-      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-        <q-card flat bordered class="">
-          <q-card-section class="row">
-            <div class="text-h6 col-12">
-              Sales vs Quota
-              <q-btn
-                flat
-                dense
-                icon="fas fa-download"
-                class="float-right"
-                @click="SaveImage('gauge')"
-                :color="!$q.dark.isActive ? 'grey-8' : 'white'"
-              >
-                <q-tooltip>Download</q-tooltip>
-              </q-btn>
-            </div>
-          </q-card-section>
-
-          <q-separator inset></q-separator>
-
-          <q-card-section>
-            <IEcharts
-              :option="gaugeOptions"
-              ref="gauge"
-              :resizable="true"
-              style="height: 220px"
-            />
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
+    
+    
   </q-page>
 </template>
 
@@ -673,11 +701,13 @@ export default {
     },
     addCar() {
       let vm = this;
-      let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjkyMDEwMjQsInVzZXJuYW1lIjoidGUyc3QiLCJvcmdOYW1lIjoiT3JnMSIsImlhdCI6MTYyOTE2NTAyNH0.VOjI3UQURv4ZeBKPr6htuFewkUd_FKE5XInV8UrN5Gk";
-      //vm.deposit.id = vm.autoId++;
-      vm.deposit.id = 2;
-      vm.deposit.status = "Pendiente de validar";
-      let arg = ["{\"id\":\"vm.deposit.id\",\"marca\":\"VW\",\"modelo\":\"Jetta 2011\",\"placas\":\"398-SKT\",\"verificentroid\":\"V1\",\"tecnicoid\":\"T1\",\"odometroid\":\"Od1\",\"validadorid\":\"V4\",\"status\":\"Calcomania 0\",\"co\":\"0.1\",\"co2\":\"14.7\",\"o2\":\"0.1\",\"noxppm\":\"106\",\"cargahp\":\"12.2\"}"]
+      let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjk3OTQ5MTIsInVzZXJuYW1lIjoidGVzdDEiLCJvcmdOYW1lIjoiT3JnMSIsImlhdCI6MTYyOTc1ODkxMn0.abxZSqxE-N76hoGgKQ-MWJOZCKO49YGGmN-m7KPQs_o";
+      vm.deposit.verificentroid = "V1"
+      vm.deposit.validadorid = "V24"
+      vm.deposit.status = "Por validar"
+      vm.deposit.id = vm.autoId++;
+      //let arg = ["{\"id\":\"7\",\"marca\":\"VW\",\"modelo\":\"Jetta 2011\",\"placas\":\"398-SKT\",\"verificentroid\":\"V1\",\"tecnicoid\":\"T1\",\"odometroid\":\"Od1\",\"validadorid\":\"V4\",\"status\":\"Calcomania 0\",\"co\":\"0.1\",\"co2\":\"14.7\",\"o2\":\"0.1\",\"noxppm\":\"106\",\"cargahp\":\"12.2\"}"]
+      let arg = ["{\"id\":\""+vm.deposit.id+"\",\"marca\":\""+vm.deposit.marca+"\",\"modelo\":\""+vm.deposit.modelo+"\",\"placas\":\""+vm.deposit.placas+"\",\"verificentroid\":\""+vm.deposit.verificentroid+"\",\"tecnicoid\":\""+vm.deposit.tecnicoid+"\",\"odometroid\":\""+vm.deposit.odometroid+"\",\"validadorid\":\""+vm.deposit.validadorid+"\",\"status\":\""+vm.deposit.status+"\",\"co\":\""+vm.deposit.co+"\",\"co2\":\""+vm.deposit.co2+"\",\"o2\":\""+vm.deposit.o2+"\",\"noxppm\":\""+vm.deposit.noxppm+"\",\"cargahp\":\""+vm.deposit.cargahp+"\"}"]
       console.log(vm.deposit)
       let body = {
         "fcn": "CreateCar",
@@ -690,6 +720,15 @@ export default {
       };
       console.log("Deposit "+ vm.deposit);
       axios.post("http://localhost:4000/channels/mychannel/chaincodes/fabcar", body,config).then(console.log).catch(console.log)
+      vm.deposit = {}
+    },
+    validarAuto(){
+      if ((Math.round(Math.random() * (10 - 0)) + 0) == 5){
+        console.log("El auto cuenta con multas por pagar")
+        alert("Favor de pagar multas antes de verificar")
+      }else{
+        console.log("El auto No tiene multas, adelante")
+      }
     }
   },
 };

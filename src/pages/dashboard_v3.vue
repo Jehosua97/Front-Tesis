@@ -4,7 +4,7 @@
       <div class="row q-mb-md q-col-gutter-md">
         <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_1">
           <q-card class="shadow">
-            <q-card-section class="theme_color q-pa-sm text-white">
+            <q-card-section class="theme_color q-pa-sm text-dark">
               <q-item class="q-pb-none q-pt-xs">
                 <q-item-section>
                   <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">900</q-item-label>
@@ -95,69 +95,30 @@
           </q-card>
         </div>
       </div>
-      <div class="row q-col-gutter-md">
-        <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
-          <q-card flat bordered class="shadow theme_color q-pa-none q-ma-none">
-            <q-card-section class="row">
-              <div class="text-white col-12" style="font-weight: 600;letter-spacing: 1px;font-size: 16px;">Sales vs
-                Goals
-                <q-btn flat dense icon="fas fa-download" class="float-right" @click="SaveImage('sales_goals')"
-                       color="grey-6">
-                  <q-tooltip>Download</q-tooltip>
-                </q-btn>
-              </div>
-            </q-card-section>
-
-            <q-separator class="full-width" inset></q-separator>
-
-            <q-card-section>
-              <IEcharts :option="areaChartOption" ref="sales_goals" :resizable="true" style="height:320px"/>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="col-lg-5 col-md-5 col-sm-12 col-xs-12">
-          <q-card flat bordered class="shadow theme_color q-pa-none q-ma-none">
-            <q-card-section class="row">
-              <div class="text-white col-12" style="font-weight: 600;letter-spacing: 1px;font-size: 16px;">Market Share
-                & Growth
-                <q-btn flat dense icon="fas fa-download" class="float-right" @click="SaveImage('market_share')"
-                       color="grey-6">
-                  <q-tooltip>Download</q-tooltip>
-                </q-btn>
-              </div>
-            </q-card-section>
-
-            <q-separator class="full-width" inset></q-separator>
-
-            <q-card-section>
-              <IEcharts ref="market_share" :option="getBarChartOptions" :resizable="true" style="height:320px"/>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
       <div class="row q-col-gutter-md q-pt-md">
         <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
           <q-card flat bordered class="shadow theme_color q-pa-none q-ma-none">
             <q-card-section>
-              <div class="text-white" style="font-weight: 600;letter-spacing: 1px;font-size: 16px;">Key Competitors
+              <div  style="font-weight: 600;letter-spacing: 1px;font-size: 16px;">Key Competitors
                 <q-btn flat dense icon="fas fa-download" class="float-right" @click="SaveImage('key_competitors')"
                        color="grey-6">
                   <q-tooltip>Download</q-tooltip>
                 </q-btn>
+                
               </div>
             </q-card-section>
 
             <q-separator class="full-width" inset></q-separator>
 
             <q-card-section>
-              <IEcharts ref="key_competitors" :option="pieOptions" :resizable="true" style="height:270px"/>
+              
             </q-card-section>
           </q-card>
         </div>
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
           <q-card flat bordered class="shadow theme_color q-pa-none q-ma-none">
             <q-card-section>
-              <div class="text-white" style="font-weight: 600;letter-spacing: 1px;font-size: 16px;">Sales Pipeline by
+              <div  style="font-weight: 600;letter-spacing: 1px;font-size: 16px;">Sales Pipeline by
                 Sales Rep
                 <q-btn flat dense icon="fas fa-download" class="float-right" @click="SaveImage('sales_pipeline')"
                        color="grey-6">
@@ -171,90 +132,6 @@
             <q-card-section>
               <IEcharts ref="sales_pipeline" :option="stackedBarOptions" :resizable="true" style="height:270px"/>
             </q-card-section>
-          </q-card>
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-pt-md">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <q-card flat bordered class="shadow theme_color">
-            <q-table
-              card-style="background-color: #343a40 !important;color:white"
-              card-container-style="background-color: #343a40 !important"
-              title="All Activities"
-              :data="data"
-              :hide-header="mode === 'grid'"
-              table-class="text-white"
-              table-header-class="text-white"
-              :columns="columns"
-              row-key="name"
-              :grid="mode=='grid'"
-              :filter="filter"
-              :pagination.sync="pagination"
-            >
-              <template v-slot:top-left="props">
-                <div class="text-h6 text-white">All Activities</div>
-              </template>
-              <template v-slot:body-cell-status="props">
-                <q-td :props="props" class="text-center">
-                  <q-chip
-                    v-bind:class="{'chip_completed': props.row.status == 'Completed', 'chip_pending': props.row.status == 'Pending'}"
-                    text-color="white"
-                    dense
-                    class="text-weight-bolder text-center"
-                    square
-                    style="width: 85px"
-                  ><span class="full-width inline-block flex flex-center text-center">{{props.row.status}}</span>
-                  </q-chip>
-                </q-td>
-              </template>
-              <template v-slot:top-right="props">
-                <q-input dense outlined color="grey-3" label-color="white" v-model="filter" label="Search">
-                  <template v-slot:append>
-                    <q-icon style="color:white" name="search"/>
-                  </template>
-                </q-input>
-
-                <q-btn
-                  flat
-                  round
-                  dense
-                  :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-                  @click="props.toggleFullscreen"
-                  v-if="mode === 'list'"
-                  class="text-white"
-                >
-                  <q-tooltip
-                    :disable="$q.platform.is.mobile"
-                    v-close-popup
-                  >{{props.inFullscreen ? 'Exit Fullscreen' : 'Toggle Fullscreen'}}
-                  </q-tooltip>
-                </q-btn>
-
-                <q-btn
-                  flat
-                  round
-                  dense
-                  :icon="mode === 'grid' ? 'list' : 'grid_on'"
-                  @click="mode = mode === 'grid' ? 'list' : 'grid'; separator = mode === 'grid' ? 'none' : 'horizontal'"
-                  v-if="!props.inFullscreen"
-                  class="text-white"
-                >
-                  <q-tooltip
-                    :disable="$q.platform.is.mobile"
-                    v-close-popup
-                  >{{mode==='grid' ? 'List' : 'Grid'}}
-                  </q-tooltip>
-                </q-btn>
-
-                <q-btn
-                  style="background-color:#37CDE3;color:white"
-                  icon-right="archive"
-                  label="Export to csv"
-                  no-caps
-                  @click="exportTable"
-                />
-              </template>
-            </q-table>
           </q-card>
         </div>
       </div>

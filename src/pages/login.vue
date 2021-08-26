@@ -14,6 +14,14 @@
           @click="$q.dark.toggle()"
           :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
         />
+        <q-btn
+          color="white"
+          class="absolute-top-left"
+          flat
+          round
+          @click="createUsers"
+          :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
+        />
         <q-card
           class="login-form"
           v-bind:style="
@@ -53,7 +61,12 @@
                   color="primary"
                   @click="loginNotify"
                 />
-
+                <q-btn
+                  label="Login"
+                  type="button"
+                  color="primary"
+                  @click="loginSubmit"
+                />
                 <a
                   style="font-size: 30px"
                   class="float-right"
@@ -67,6 +80,9 @@
           </q-card-section>
         </q-card>
       </q-page>
+      <label class="absolute-bottom-left">
+        <input type="file" @change="loadTextFromFile" />
+      </label>
     </q-page-container>
   </q-layout>
 </template>
@@ -74,11 +90,18 @@
 <script type="text/javascript"></script>
 <script>
 import axios from "axios";
+import { saveAs } from "file-saver";
+import fs from "fs";
 export default {
   data() {
     return {
-      username: "admin",
-      password: "Admin@CRM",
+      username: "",
+      password: "",
+      userSting: "",
+      token: "",
+      users: [],
+      passwd: [],
+      stringPwd: "",
     };
   },
   methods: {
@@ -87,31 +110,92 @@ export default {
         message: "Login Successful",
       });
     },
-    createUser(body) {
+    createUserRequest(body) {
+      let vm = this;
       axios.post("http://localhost:4000/users", body).then((data) => {
-        console.log("Los token: "+data.data.token);
+        window.localStorage.setItem(
+          body.username + "-user-token",
+          data.data.token
+        );
       });
+      //Saving the user and password
+      //vm.users = vm.users.push(body.username);
+      //vm.passwd = vm.password.push(window.localStorage.getItem(body.username+"-user-token"))
+    },
+    saveStaticDataToFile() {
+      let vm = this;
+      var blob = new Blob([vm.userSting], { type: "text/plain;charset=utf-8" });
+      saveAs(blob, "Users-Passwords.txt");
+      console.log();
+    },
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
+    createUsers() {
+      let vm = this;
+      vm.userSting = [];
+      console.log("Creando los usuarios");
+      let v1 = {
+        username: "Verificentro_C-00101",
+        orgName: "Org1",
+      };
+      let v2 = {
+        username: "Verificentro_C-0021",
+        orgName: "Org2",
+      };
+      let v3 = {
+        username: "Verificentro_C-0031",
+        orgName: "Org3",
+      };
+      vm.createUserRequest(v1);
+      vm.userSting =
+        vm.userSting +
+        "\n-----------------\n" +
+        v1.orgName +
+        "_" +
+        v1.username +
+        "_" +
+        window.localStorage.getItem("Verificentro_C-00101-user-token");
+      vm.sleep(2000);
+      vm.createUserRequest(v2);
+      vm.userSting =
+        vm.userSting +
+        "\n-----------------\n" +
+        v2.orgName +
+        "_" +
+        v2.username +
+        "_" +
+        window.localStorage.getItem("Verificentro_C-0021-user-token");
+      vm.sleep(2000);
+      vm.createUserRequest(v3);
+      vm.userSting =
+        vm.userSting +
+        "\n-----------------\n" +
+        v3.orgName +
+        "_" +
+        v3.username +
+        "_" +
+        window.localStorage.getItem("Verificentro_C-0031-user-token")+"_";
+      vm.saveStaticDataToFile();
+    },
+    loginSubmit() {
+      let vm = this;
+      //console.log(vm.username);
+      //console.log(window.localStorage.getItem(vm.username + "-user-token"));
+      console.log(vm.stringPwd);
+    },
+    loadTextFromFile(ev) {
+      let vm = this;
+      const file = ev.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => (vm.stringPwd = e.target.result);
+      reader.readAsText(file);
     },
   },
 
   mounted() {
     let vm = this;
-    console.log("Creando los usuarios");
-    let v1 = {
-      username: "Verificentro C-001",
-      orgName: "Org1",
-    };
-    let v2 = {
-      username: "Verificentro C-002",
-      orgName: "Org2",
-    };
-    let v3 = {
-      username: "Verificentro C-003",
-      orgName: "Org3",
-    };
-    vm.createUser(v1);
-    vm.createUser(v2);
-    vm.createUser(v3);
+
     particlesJS("particles-js", {
       particles: {
         number: {

@@ -80,7 +80,7 @@
                 </q-item-section>
 
                 <q-item-section>
-                  Dashboard v1
+                  Registrar entrada
                 </q-item-section>
               </q-item>
 
@@ -97,7 +97,23 @@
                 </q-item-section>
 
                 <q-item-section>
-                  Dashboard v2
+                  Consulta de Resultados
+                </q-item-section>
+              </q-item>
+              
+              <q-item
+                active-class="tab-active"
+                to="/transactions"
+                class="q-ma-sm navigation-item"
+                clickable
+                v-ripple
+              >
+                <q-item-section avatar>
+                  <q-icon name="assignment" />
+                </q-item-section>
+
+                <q-item-section>
+                  Transactions
                 </q-item-section>
               </q-item>
 
@@ -114,7 +130,7 @@
                 </q-item-section>
 
                 <q-item-section>
-                  Dashboard v3
+                  Transacciones por validar
                 </q-item-section>
               </q-item>
 
@@ -182,22 +198,7 @@
                 </q-item-section>
               </q-item>
 
-              <q-item
-                active-class="tab-active"
-                to="/transactions"
-                class="q-ma-sm navigation-item"
-                clickable
-                v-ripple
-              >
-                <q-item-section avatar>
-                  <q-icon name="assignment" />
-                </q-item-section>
-
-                <q-item-section>
-                  Transactions
-                </q-item-section>
-              </q-item>
-
+             
               <q-item
                 active-class="tab-active"
                 to="/employee_salary_list"

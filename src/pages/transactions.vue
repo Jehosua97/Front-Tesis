@@ -1,5 +1,100 @@
 <template>
   <q-page>
+    <div class="q-ma-md">
+      <div class="row q-mb-md q-col-gutter-md">
+        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_1">
+          <q-card class="shadow">
+            <q-card-section class="theme_color q-pa-sm text-dark">
+              <q-item class="q-pb-none q-pt-xs">
+                <q-item-section>
+                  <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">900</q-item-label>
+                  <q-item-label class="text-grey-4">Total Orders</q-item-label>
+                </q-item-section>
+
+                <q-item-section side>
+                  <q-icon name="o_shopping_cart" class="box_1" size="60px"></q-icon>
+                </q-item-section>
+              </q-item>
+              <q-item class="q-py-xs" style="min-height: unset">
+                <q-item-section>
+                  <div class="progress-base q-my-sm">
+                    <div class="progress-bar-1" style="width:70%"></div>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_2 ">
+          <q-card class="shadow">
+            <q-card-section class="theme_color q-pa-sm text-white">
+              <q-item class="q-pb-none q-pt-xs">
+                <q-item-section>
+                  <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">1050</q-item-label>
+                  <q-item-label class="text-grey-4">Total Expenses</q-item-label>
+                </q-item-section>
+
+                <q-item-section side>
+                  <q-icon name="o_account_balance_wallet" class="box_2" size="60px"></q-icon>
+                </q-item-section>
+              </q-item>
+              <q-item class="q-py-xs" style="min-height: unset">
+                <q-item-section>
+                  <div class="progress-base q-my-sm">
+                    <div class="progress-bar-2" style="width:40%"></div>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_3 ">
+          <q-card class="shadow">
+            <q-card-section class="theme_color q-pa-sm text-white">
+              <q-item class="q-pb-none q-pt-xs">
+                <q-item-section>
+                  <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">80 %</q-item-label>
+                  <q-item-label class="text-grey-4">Total Profit</q-item-label>
+                </q-item-section>
+
+                <q-item-section side>
+                  <q-icon name="o_account_balance" class="box_3" size="60px"></q-icon>
+                </q-item-section>
+              </q-item>
+              <q-item class="q-py-xs" style="min-height: unset">
+                <q-item-section>
+                  <div class="progress-base q-my-sm">
+                    <div class="progress-bar-3" style="width:80%"></div>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
+        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_4 ">
+          <q-card class="shadow">
+            <q-card-section class="theme_color q-pa-sm text-white">
+              <q-item class="q-pb-none q-pt-xs">
+                <q-item-section>
+                  <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">720</q-item-label>
+                  <q-item-label class="text-grey-4">New Customers</q-item-label>
+                </q-item-section>
+
+                <q-item-section side>
+                  <q-icon name="o_people" class="box_4" size="60px"></q-icon>
+                </q-item-section>
+              </q-item>
+              <q-item class="q-py-xs" style="min-height: unset">
+                <q-item-section>
+                  <div class="progress-base q-my-sm">
+                    <div class="progress-bar-4" style="width:30%"></div>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </q-card-section>
+          </q-card>
+        </div>
+      </div>
     <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <q-card flat bordered class>
@@ -177,6 +272,7 @@
           </q-card-section>
         </q-card>
       </div>
+    </div>
     </div>
   </q-page>
 </template>
