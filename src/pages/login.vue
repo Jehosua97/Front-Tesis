@@ -52,15 +52,7 @@
                 label="Password"
                 lazy-rules
               />
-
               <div>
-                <q-btn
-                  label="Login"
-                  to="/dashboard"
-                  type="button"
-                  color="primary"
-                  @click="loginNotify"
-                />
                 <q-btn
                   label="Login"
                   type="button"
@@ -92,6 +84,7 @@
 import axios from "axios";
 import { saveAs } from "file-saver";
 import fs from "fs";
+import dashboardVue from './dashboard.vue';
 export default {
   data() {
     return {
@@ -102,6 +95,7 @@ export default {
       users: [],
       passwd: [],
       stringPwd: "",
+      route:"",
     };
   },
   methods: {
@@ -150,43 +144,65 @@ export default {
       vm.createUserRequest(v1);
       vm.userSting =
         vm.userSting +
-        "\n-----------------\n" +
+        "\n" +
         v1.orgName +
-        "_" +
+        "\n" +
         v1.username +
-        "_" +
-        window.localStorage.getItem("Verificentro_C-00101-user-token");
+        "\n" +
+        window.localStorage.getItem("Verificentro_C-00101-user-token")+
+        "\n-----------------\n";
       vm.sleep(2000);
       vm.createUserRequest(v2);
       vm.userSting =
         vm.userSting +
-        "\n-----------------\n" +
+        "\n" +
         v2.orgName +
-        "_" +
+        "\n" +
         v2.username +
-        "_" +
-        window.localStorage.getItem("Verificentro_C-0021-user-token");
+        "\n" +
+        window.localStorage.getItem("Verificentro_C-0021-user-token")+
+        "\n-----------------\n";
       vm.sleep(2000);
       vm.createUserRequest(v3);
       vm.userSting =
         vm.userSting +
-        "\n-----------------\n" +
+        "\n" +
         v3.orgName +
-        "_" +
+        "\n" +
         v3.username +
-        "_" +
-        window.localStorage.getItem("Verificentro_C-0031-user-token")+"_";
+        "\n" +
+        window.localStorage.getItem("Verificentro_C-0031-user-token") +
+        "\n-----------------\n";
       vm.saveStaticDataToFile();
     },
     loginSubmit() {
       let vm = this;
-      //console.log(vm.username);
+      console.log("Current User" + vm.username);
       //console.log(window.localStorage.getItem(vm.username + "-user-token"));
       console.log(vm.stringPwd);
+      let sub = vm.stringPwd.slice(
+        vm.stringPwd.indexOf(vm.username) + vm.username.length + 1
+      );
+      console.log("El sub " + sub);
+      let trueToken = sub.substring(0, sub.indexOf("\n-----------------"));
+      console.log("El Token:" + trueToken);
+      if (vm.password == trueToken) {
+        console.log("Adelante");
+        vm.route = "/dashboard"
+        this.$q.notify({
+          message: "Bienvenido "+vm.username,
+        });
+        vm.$router.push("/dashboard")
+        //to = dashboard
+      } else {
+        alert("Credenciales incorrectas");
+        //to = ./
+      }
     },
     loadTextFromFile(ev) {
       let vm = this;
       const file = ev.target.files[0];
+      //let url = URL.createObjectURL(file)
       const reader = new FileReader();
       reader.onload = (e) => (vm.stringPwd = e.target.result);
       reader.readAsText(file);

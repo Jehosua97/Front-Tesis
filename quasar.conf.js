@@ -73,7 +73,25 @@ module.exports = function (ctx) {
     devServer: {
       https: false,
       port: 8080,
-      open: true // opens browser window automatically
+//      open: true, // opens browser window automatically
+//      allowedHosts: ['http://127.0.0.1:5984'],
+//      proxy: {
+//        // proxy all requests starting with /api to jsonplaceholder
+//        '/api': 'http://127.0.0.1:5984'
+//      },
+//      before (app) {
+//        const cors = require('cors')
+//      
+//        app.options('*',cors())
+//        app.use(cors())
+//      },
+//      headers: {
+//        // 'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+//        // 'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+//        'Access-Control-Allow-Origin': '*',
+//},
+//
+//
     },
 
     // animations: 'all', // --- includes all animations

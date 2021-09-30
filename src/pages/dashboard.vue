@@ -49,7 +49,7 @@
                   dense
                   icon="fas fa-download"
                   class="float-right"
-                  @click="SaveImage('line')"
+                  @click="addCar"
                   :color="!$q.dark.isActive ? 'grey-8' : 'white'"
                 >
                   <q-tooltip>Download</q-tooltip>
@@ -109,19 +109,18 @@
                   </q-item>
                 </q-list>
                 <center>
-                  
                   <q-btn
                     color="primary"
                     icon-right="archive"
-                    label="Validar Auto"
+                    label="Verificar Multas"
                     no-caps
-                    @click="validarAuto"
+                    @click="validarAutoMulta"
                   />
                 </center>
               </q-form>
             </q-card-section>
           </q-card>
-          <br>
+          <br />
           <q-card flat bordered class="">
             <q-card-section class="row">
               <div class="text-h6 col-12">
@@ -132,65 +131,28 @@
                   class="float-right"
                   :color="!$q.dark.isActive ? 'grey-8' : 'white'"
                 >
-                <img src="../../assets/success.svg" height="35"/>
+                  <img src="../../assets/success.svg" height="35" />
                 </q-btn>
               </div>
             </q-card-section>
 
             <q-separator inset></q-separator>
-
             <q-card-section>
-              <q-separator inset></q-separator>
               <q-form>
-                <q-list>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Marca</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.marca"
-                        label="Marca"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Modelo</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.modelo"
-                        label="Modelo"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Placas</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.placas"
-                        label="Placas"
-                      />
-                    </q-item-section>
-                  </q-item>
-                </q-list>
                 <center>
                   <q-btn
                     color="primary"
                     icon-right="archive"
                     label="Validar Auto"
                     no-caps
-                    @click="validarAuto"
+                    @click="ConectDB"
                   />
                 </center>
               </q-form>
             </q-card-section>
           </q-card>
         </div>
-        
+
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
           <q-card flat bordered class="">
             <q-card-section class="row">
@@ -289,12 +251,112 @@
                   </q-item>
                   <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Carga HP</q-item-label>
+                      <q-item-label class="q-pb-xs">Hidrocarburos</q-item-label>
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.cargahp"
-                        label="HP Registrado"
+                        v-model="deposit.hidrocarburo"
+                        label="HC x pmm"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs">Lambda</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.lambda"
+                        label="Lambda"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs">Tapa Gasolina</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.tapagasolina"
+                        label="Tapa Gasolina"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Bayoneta de Aceite</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.bayonetaaceite"
+                        label="Bayoneta de Aceite"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Filtro de Aire</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.filtroaire"
+                        label="Filtro de Aire"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Tubo de Escape</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.tuboescape"
+                        label="Tubo de Escape"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Tapon de Radiador</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.taponradiador"
+                        label="Tapon de Radiador"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Manguera de Vacio</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.mangueravacio"
+                        label="Manguera de Vacio"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Luces Traceras y Delanteras</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.lucestyd"
+                        label="Luces Traceras y Delanteras"
                       />
                     </q-item-section>
                   </q-item>
@@ -314,8 +376,6 @@
         </div>
       </div>
     </div>
-    
-    
   </q-page>
 </template>
 
@@ -701,35 +761,192 @@ export default {
     },
     addCar() {
       let vm = this;
-      let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjk3OTQ5MTIsInVzZXJuYW1lIjoidGVzdDEiLCJvcmdOYW1lIjoiT3JnMSIsImlhdCI6MTYyOTc1ODkxMn0.abxZSqxE-N76hoGgKQ-MWJOZCKO49YGGmN-m7KPQs_o";
-      vm.deposit.verificentroid = "V1"
-      vm.deposit.validadorid = "V24"
-      vm.deposit.status = "Por validar"
+      let token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzMwNDQ0NTEsInVzZXJuYW1lIjoidGUxdDEiLCJvcmdOYW1lIjoiT3JnOCIsImlhdCI6MTYzMzAwODQ1MX0.60831h2MHcVHe1FojkmVRnEsWKOZgfMqQv2ODHxS4ig";
+      vm.deposit.verificentroid = "CVV-1";
+      vm.deposit.validadorid = "V24";
+      vm.deposit.status = "Por validar";
       vm.deposit.id = vm.autoId++;
-      //let arg = ["{\"id\":\"7\",\"marca\":\"VW\",\"modelo\":\"Jetta 2011\",\"placas\":\"398-SKT\",\"verificentroid\":\"V1\",\"tecnicoid\":\"T1\",\"odometroid\":\"Od1\",\"validadorid\":\"V4\",\"status\":\"Calcomania 0\",\"co\":\"0.1\",\"co2\":\"14.7\",\"o2\":\"0.1\",\"noxppm\":\"106\",\"cargahp\":\"12.2\"}"]
-      let arg = ["{\"id\":\""+vm.deposit.id+"\",\"marca\":\""+vm.deposit.marca+"\",\"modelo\":\""+vm.deposit.modelo+"\",\"placas\":\""+vm.deposit.placas+"\",\"verificentroid\":\""+vm.deposit.verificentroid+"\",\"tecnicoid\":\""+vm.deposit.tecnicoid+"\",\"odometroid\":\""+vm.deposit.odometroid+"\",\"validadorid\":\""+vm.deposit.validadorid+"\",\"status\":\""+vm.deposit.status+"\",\"co\":\""+vm.deposit.co+"\",\"co2\":\""+vm.deposit.co2+"\",\"o2\":\""+vm.deposit.o2+"\",\"noxppm\":\""+vm.deposit.noxppm+"\",\"cargahp\":\""+vm.deposit.cargahp+"\"}"]
-      console.log(vm.deposit)
+      vm.deposit.ccvvalid = vm.asignarCVVValidador(
+        vm.deposit.verificentroid.substring(4, vm.deposit.verificentroid.length)
+      );
+      vm.deposit.lineaverifica = parseInt(Math.random() * (4 - 1) + 1);
+      console.log("Agregando el registro " + vm.deposit.id);
+      vm.insertLedger(token);
+    },
+    insertLedger(token) {
+      let arg = [
+        '{"id":"' +
+          vm.deposit.id +
+          '","marca":"' +
+          vm.deposit.marca +
+          '","modelo":"' +
+          vm.deposit.modelo +
+          '","placas":"' +
+          vm.deposit.placas +
+          '","anio":"' +
+          vm.deposit.anio +
+          '","verificentroid":"' +
+          vm.deposit.verificentroid +
+          '","tecnicoid":"' +
+          vm.deposit.tecnicoid +
+          '","odometroid":"' +
+          vm.deposit.odometroid +
+          '","validadorid":"' +
+          vm.deposit.validadorid +
+          '","lineaverifica":"' +
+          vm.deposit.lineaverifica +
+          '","status":"' +
+          vm.deposit.status +
+          '","co":"' +
+          vm.deposit.co +
+          '","co2":"' +
+          vm.deposit.co2 +
+          '","o2":"' +
+          vm.deposit.o2 +
+          '","noxppm":"' +
+          vm.deposit.noxppm +
+          '","hidrocarburo":"' +
+          vm.deposit.hidrocarburo +
+          '","lambda":"' +
+          vm.deposit.lambda +
+          '","ccvvalid":"' +
+          vm.deposit.ccvvalid +
+          '","validadorid":"' +
+          vm.deposit.validadorid +
+          '","tapagasolina":"' +
+          vm.deposit.tapagasolina +
+          '","bayonetaaceite":"' +
+          vm.deposit.bayonetaaceite +
+          '","filtroaire":"' +
+          vm.deposit.filtroaire +
+          '","tuboescape":"' +
+          vm.deposit.tuboescape +
+          '","taponradiador":"' +
+          vm.deposit.taponradiador +
+          '","mangueravacio":"' +
+          vm.deposit.mangueravacio +
+          '","ruedas":"' +
+          vm.deposit.ruedas +
+          '","lucestyd":"' +
+          vm.deposit.lucestyd +
+          '","createdate":"' +
+          vm.deposit.createdate +
+          '","updatedate":"' +
+          vm.deposit.updatedate +
+          '"}',
+      ];
+      console.log(vm.deposit);
       let body = {
-        "fcn": "CreateCar",
-        "chaincodeName":"fabcar",
-        "channelName": "mychannel",
-        "args": arg
+        fcn: "CreateCar",
+        chaincodeName: "fabcar",
+        channelName: "mychannel",
+        args: arg,
       };
       let config = {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       };
-      console.log("Deposit "+ vm.deposit);
-      axios.post("http://localhost:4000/channels/mychannel/chaincodes/fabcar", body,config).then(console.log).catch(console.log)
-      vm.deposit = {}
+      console.log("Deposit " + vm.deposit);
+      axios
+        .post(
+          "http://localhost:4000/channels/mychannel/chaincodes/fabcar",
+          body,
+          config
+        )
+        .then(console.log)
+        .catch(console.log);
+      vm.deposit = {};
     },
-    validarAuto(){
-      if ((Math.round(Math.random() * (10 - 0)) + 0) == 5){
-        console.log("El auto cuenta con multas por pagar")
-        alert("Favor de pagar multas antes de verificar")
-      }else{
-        console.log("El auto No tiene multas, adelante")
+    validarAutoMulta() {
+      if (Math.round(Math.random() * (10 - 0)) + 0 == 5) {
+        console.log("El auto cuenta con multas por pagar");
+        this.$q.notify({
+          message: "Favor de pagar multas antes de verificar",
+        });
+        let vm = this;
+        //vm.deposit.id = "--"   Por validar
+        vm.deposit.verificentroid = "Dinamicoooo"; //Tomarlo de algun lado
+        vm.deposit.tecnicoid = "--";
+        vm.deposit.odometroid = "--";
+        vm.deposit.validadorid = "--";
+        vm.deposit.lineaverifica = "--";
+        vm.deposit.status = "Rechazado por multas";
+        vm.deposit.co = "--";
+        vm.deposit.co2 = "--";
+        vm.deposit.o2 = "--";
+        vm.deposit.noxppm = "--";
+        vm.deposit.hidrocarburo = "--";
+        vm.deposit.lambda = "--";
+        vm.deposit.ccvvalid = "--";
+        vm.deposit.validadorid = "--";
+        vm.deposit.tapagasolina = "--";
+        vm.deposit.bayonetaaceite = "--";
+        vm.deposit.filtroaire = "--";
+        vm.deposit.tuboescape = "--";
+        vm.deposit.taponradiador = "--";
+        vm.deposit.mangueravacio = "--";
+        vm.deposit.ruedas = "--";
+        vm.deposit.lucestyd = "--";
+        vm.deposit.createdate = vm.currentDate();
+        vm.deposit.updatedate = "--";
+      } else {
+        console.log("El auto No tiene multas, adelante");
+        this.$q.notify({
+          message: "Sin multas, adelante ",
+        });
       }
-    }
+    },
+    currentDate() {
+      let date = new Date();
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      let hour = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
+      if (month < 10) {
+        var data = day+"-0"+month+"-"+year+" "+hour+":"+minutes+":"+seconds;
+        return data
+      } else {
+        var data = day+"-"+month+"-"+year+" "+hour+":"+minutes+":"+seconds;
+        return data
+      }
+    },
+    asignarCVVValidador(currentCVV) {
+      console.log("CVV Origen: " + currentCVV);
+      let vm = this;
+      var randomNumber = parseInt(Math.random() * (11 - 1) + 1);
+      if (randomNumber == currentCVV) {
+        vm.asignarCVVValidador(currentCVV);
+      } else {
+        var Org = "CVV-" + randomNumber;
+        return Org;
+      }
+    },
+    ConectDB() {
+      //var http = new XMLHttpRequest();
+      //http.open('GET', 'http://127.0.0.1:5984/_all_dbs', true);
+      //http.onreadystatechange = function() {
+      //    if (http.readyState == 4 && http.status == 200) {
+      //        console.debug('it works');
+      //    }
+      //};
+      //http.send(null)
+      console.log(parseInt(Math.random() * (11 - 1) + 1));
+      /*const NodeCouchDb = require("node-couchdb");
+      const couch = new NodeCouchDb({
+        auth: {
+          user: "admin",
+          password: "adminpw",
+        }
+      });
+     couch.listDatabases().then(
+        (dbs) => console.log("Respuesta DB" + dbs),
+        (err) => {
+          console.log(err)
+        }
+      );*/
+    },
   },
 };
 </script>
