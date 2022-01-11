@@ -673,7 +673,7 @@ export default {
     },
     addCar() {
       let vm = this;
-      let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjk3OTQ5MTIsInVzZXJuYW1lIjoidGVzdDEiLCJvcmdOYW1lIjoiT3JnMSIsImlhdCI6MTYyOTc1ODkxMn0.abxZSqxE-N76hoGgKQ-MWJOZCKO49YGGmN-m7KPQs_o";
+      let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDE4ODg1NTEsInVzZXJuYW1lIjoidGVzdDIyMSIsIm9yZ05hbWUiOiJPcmcyIiwiaWF0IjoxNjQxODUyNTUxfQ.51o7-aPbg3SKBfVwUOBALsA1fvZ7Ou-T01wesRaZQ7Q";
       vm.deposit.verificentroid = "V1"
       vm.deposit.validadorid = "V24"
       vm.deposit.status = "Por validar"

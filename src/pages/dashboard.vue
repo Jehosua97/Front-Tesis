@@ -323,6 +323,17 @@
                   </q-item>
                   <q-item>
                     <q-item-section>
+                      <q-item-label class="q-pb-xs">Llantas</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.ruedas"
+                        label="Llantas"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
                       <q-item-label class="q-pb-xs"
                         >Tapon de Radiador</q-item-label
                       >
@@ -400,6 +411,8 @@ function wrapCsvValue(val, formatFn) {
 export default {
   data() {
     return {
+      arrayId: [],
+      maxId:-1,
       autoId: 0,
       deposit: {},
       options: [
@@ -759,14 +772,20 @@ export default {
       downloadLink.download = type + ".png";
       downloadLink.click();
     },
-    addCar() {
+    async addCar() {
       let vm = this;
+      //Obteniendo el id mayor
+      await vm.ConectDB();
+      let max = parseInt(vm.maxId)+1;
+      console.log("Soy max", max)
       let token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzMwNDQ0NTEsInVzZXJuYW1lIjoidGUxdDEiLCJvcmdOYW1lIjoiT3JnOCIsImlhdCI6MTYzMzAwODQ1MX0.60831h2MHcVHe1FojkmVRnEsWKOZgfMqQv2ODHxS4ig";
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDE4ODg1NTEsInVzZXJuYW1lIjoidGVzdDIyMSIsIm9yZ05hbWUiOiJPcmcyIiwiaWF0IjoxNjQxODUyNTUxfQ.51o7-aPbg3SKBfVwUOBALsA1fvZ7Ou-T01wesRaZQ7Q";
       vm.deposit.verificentroid = "CVV-1";
       vm.deposit.validadorid = "V24";
       vm.deposit.status = "Por validar";
-      vm.deposit.id = vm.autoId++;
+      vm.deposit.id = max;
+      vm.deposit.createdate = vm.currentDate();
+      vm.deposit.updatedate = "--";
       vm.deposit.ccvvalid = vm.asignarCVVValidador(
         vm.deposit.verificentroid.substring(4, vm.deposit.verificentroid.length)
       );
@@ -775,6 +794,7 @@ export default {
       vm.insertLedger(token);
     },
     insertLedger(token) {
+      let vm = this;
       let arg = [
         '{"id":"' +
           vm.deposit.id +
@@ -857,14 +877,21 @@ export default {
         .catch(console.log);
       vm.deposit = {};
     },
-    validarAutoMulta() {
+    async validarAutoMulta() {
+      let vm = this;
+      //Obteniendo el id mayor
+      await vm.ConectDB();
+      let max = parseInt(vm.maxId)+1;
+      console.log("Soy max", max)
+      //Aleatoriedad para los que si tienen multas
       if (Math.round(Math.random() * (10 - 0)) + 0 == 5) {
         console.log("El auto cuenta con multas por pagar");
         this.$q.notify({
           message: "Favor de pagar multas antes de verificar",
         });
-        let vm = this;
-        //vm.deposit.id = "--"   Por validar
+        let token =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDE4ODg1NTEsInVzZXJuYW1lIjoidGVzdDIyMSIsIm9yZ05hbWUiOiJPcmcyIiwiaWF0IjoxNjQxODUyNTUxfQ.51o7-aPbg3SKBfVwUOBALsA1fvZ7Ou-T01wesRaZQ7Q";
+        vm.deposit.id = max; 
         vm.deposit.verificentroid = "Dinamicoooo"; //Tomarlo de algun lado
         vm.deposit.tecnicoid = "--";
         vm.deposit.odometroid = "--";
@@ -889,6 +916,7 @@ export default {
         vm.deposit.lucestyd = "--";
         vm.deposit.createdate = vm.currentDate();
         vm.deposit.updatedate = "--";
+        vm.insertLedger(token);
       } else {
         console.log("El auto No tiene multas, adelante");
         this.$q.notify({
@@ -905,11 +933,33 @@ export default {
       let minutes = date.getMinutes();
       let seconds = date.getSeconds();
       if (month < 10) {
-        var data = day+"-0"+month+"-"+year+" "+hour+":"+minutes+":"+seconds;
-        return data
+        var data =
+          day +
+          "-0" +
+          month +
+          "-" +
+          year +
+          " " +
+          hour +
+          ":" +
+          minutes +
+          ":" +
+          seconds;
+        return data;
       } else {
-        var data = day+"-"+month+"-"+year+" "+hour+":"+minutes+":"+seconds;
-        return data
+        var data =
+          day +
+          "-" +
+          month +
+          "-" +
+          year +
+          " " +
+          hour +
+          ":" +
+          minutes +
+          ":" +
+          seconds;
+        return data;
       }
     },
     asignarCVVValidador(currentCVV) {
@@ -923,29 +973,34 @@ export default {
         return Org;
       }
     },
-    ConectDB() {
-      //var http = new XMLHttpRequest();
-      //http.open('GET', 'http://127.0.0.1:5984/_all_dbs', true);
-      //http.onreadystatechange = function() {
-      //    if (http.readyState == 4 && http.status == 200) {
-      //        console.debug('it works');
-      //    }
-      //};
-      //http.send(null)
-      console.log(parseInt(Math.random() * (11 - 1) + 1));
-      /*const NodeCouchDb = require("node-couchdb");
-      const couch = new NodeCouchDb({
+    async ConectDB() {
+    let vm = this;
+    var username = 'admin';
+    var password = 'adminpw';
+      let body = {
+        selector: {},
+      };
+      let config = {
         auth: {
-          user: "admin",
-          password: "adminpw",
+            username: username,
+            password: password
         }
-      });
-     couch.listDatabases().then(
-        (dbs) => console.log("Respuesta DB" + dbs),
-        (err) => {
-          console.log(err)
+      };
+      console.log("Deposit " + vm.deposit);
+      const response = await axios
+        .post(
+          "http://localhost:5984/mychannel_fabcar/_find",
+          body,
+          config
+        );
+        for(let i = 0; i < response.data.docs.length; i++){
+          vm.arrayId.push(response.data.docs[i]._id);
         }
-      );*/
+        console.log("Soy el array de id", vm.arrayId)
+        for(let i=0; i< vm.arrayId.length; i++){
+          if(parseInt(vm.arrayId[i]) > vm.maxId)
+              vm.maxId = vm.arrayId[i]
+      }
     },
   },
 };
