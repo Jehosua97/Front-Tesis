@@ -127,89 +127,8 @@
       </div>
       <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-          <q-card flat bordered class>
-            <q-card-section>
-              <div class="text-h6">Transacciones asignadas</div>
-              <q-btn
-                color="primary"
-                icon-right="archive"
-                label="Export to csv"
-                no-caps
-                @click="SearchDB"
-              />
-            </q-card-section>
-
-            <q-separator inset> </q-separator>
-
-            <q-card-section>
-              <q-table
-                :data="data"
-                :hide-header="mode === 'grid'"
-                :columns="columns"
-                row-key="name"
-                :grid="mode == 'grid'"
-                :filter="filter"
-                :pagination.sync="pagination"
-              >
-                <template v-slot:top-right="props">
-                  <q-input
-                    outlined
-                    dense
-                    debounce="300"
-                    v-model="filter"
-                    placeholder="Search"
-                  >
-                    <template v-slot:append>
-                      <q-icon name="search" />
-                    </template>
-                  </q-input>
-
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    :icon="
-                      props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'
-                    "
-                    @click="props.toggleFullscreen"
-                    v-if="mode === 'list'"
-                  >
-                    <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
-                      >{{
-                        props.inFullscreen
-                          ? "Exit Fullscreen"
-                          : "Toggle Fullscreen"
-                      }}
-                    </q-tooltip>
-                  </q-btn>
-
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    :icon="mode === 'grid' ? 'list' : 'grid_on'"
-                    @click="
-                      mode = mode === 'grid' ? 'list' : 'grid';
-                      separator = mode === 'grid' ? 'none' : 'horizontal';
-                    "
-                    v-if="!props.inFullscreen"
-                  >
-                    <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
-                      >{{ mode === "grid" ? "List" : "Grid" }}
-                    </q-tooltip>
-                  </q-btn>
-
-                  <q-btn
-                    color="primary"
-                    icon-right="archive"
-                    label="Export to csv"
-                    no-caps
-                    @click="exportDepositsTable"
-                  />
-                </template>
-              </q-table>
-            </q-card-section>
-          </q-card>
+        <employeesalarylist>
+        </employeesalarylist>
         </div>
       </div>
     </div>
@@ -219,6 +138,7 @@
 <script>
 import { exportFile } from "quasar";
 import axios from "axios";
+import employeesalarylist from "./employee_salary_list.vue"
 
 function wrapCsvValue(val, formatFn) {
   let formatted = formatFn !== void 0 ? formatFn(val) : val;
@@ -321,6 +241,9 @@ export default {
         },
       ],
     };
+  },
+  components:{
+    employeesalarylist
   },
   methods: {
     exportDepositsTable() {

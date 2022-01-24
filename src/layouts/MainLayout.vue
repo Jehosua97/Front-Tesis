@@ -17,7 +17,7 @@
         <!--            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">-->
         <!--          </q-avatar>-->
 
-        <q-toolbar-title>Nombre del verificentro + ID</q-toolbar-title>
+        <q-toolbar-title>Centro de Verificación Vehicular #{{userId.substring(4)}}</q-toolbar-title>
         <q-btn
           class="q-mr-xs"
           flat
@@ -283,11 +283,21 @@
 </template>
 
 <script>
+import lockr from "lockr";
+
 export default {
   data() {
     return {
       left: false
     };
+  },
+  computed: {
+    userId(){
+      return lockr.get("userId")
+    },
+    currentToken(){
+      return lockr.get("currentToken")
+    },
   },
   methods: {
     logoutNotify() {

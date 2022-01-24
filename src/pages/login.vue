@@ -19,7 +19,6 @@
           class="absolute-top-left"
           flat
           round
-          @click="createUsers"
           :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
         />
         <q-card
@@ -79,12 +78,14 @@
   </q-layout>
 </template>
 
-<script type="text/javascript"></script>
+
 <script>
 import axios from "axios";
 import { saveAs } from "file-saver";
 import fs from "fs";
-import dashboardVue from './dashboard.vue';
+import dashboardVue from "./dashboard.vue";
+import lockr from "lockr"
+
 export default {
   data() {
     return {
@@ -92,10 +93,27 @@ export default {
       password: "",
       userSting: "",
       token: "",
-      users: [],
+      users: [
+        "CVV_1",
+        "CVV_2",
+        "CVV_3",
+        "CVV_4",
+        "CVV_5",
+        "CVV_6",
+        "CVV_7",
+        "CVV_8",
+        "CVV_9",
+        "CVV_10",
+      ],
       passwd: [],
       stringPwd: "",
-      route:"",
+      route: "",
+      config: {
+        auth: {
+          username: "admin",
+          password: "adminpw",
+        },
+      },
     };
   },
   methods: {
@@ -103,18 +121,6 @@ export default {
       this.$q.notify({
         message: "Login Successful",
       });
-    },
-    createUserRequest(body) {
-      let vm = this;
-      axios.post("http://localhost:4000/users", body).then((data) => {
-        window.localStorage.setItem(
-          body.username + "-user-token",
-          data.data.token
-        );
-      });
-      //Saving the user and password
-      //vm.users = vm.users.push(body.username);
-      //vm.passwd = vm.password.push(window.localStorage.getItem(body.username+"-user-token"))
     },
     saveStaticDataToFile() {
       let vm = this;
@@ -125,93 +131,95 @@ export default {
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
-    createUsers() {
+    async loginSubmit() {
       let vm = this;
-      vm.userSting = [];
-      console.log("Creando los usuarios");
-      let v1 = {
-        username: "Verificentro_C-00101",
-        orgName: "Org1",
-      };
-      let v2 = {
-        username: "Verificentro_C-0021",
-        orgName: "Org2",
-      };
-      let v3 = {
-        username: "Verificentro_C-0031",
-        orgName: "Org3",
-      };
-      vm.createUserRequest(v1);
-      vm.userSting =
-        vm.userSting +
-        "\n" +
-        v1.orgName +
-        "\n" +
-        v1.username +
-        "\n" +
-        window.localStorage.getItem("Verificentro_C-00101-user-token")+
-        "\n-----------------\n";
-      vm.sleep(2000);
-      vm.createUserRequest(v2);
-      vm.userSting =
-        vm.userSting +
-        "\n" +
-        v2.orgName +
-        "\n" +
-        v2.username +
-        "\n" +
-        window.localStorage.getItem("Verificentro_C-0021-user-token")+
-        "\n-----------------\n";
-      vm.sleep(2000);
-      vm.createUserRequest(v3);
-      vm.userSting =
-        vm.userSting +
-        "\n" +
-        v3.orgName +
-        "\n" +
-        v3.username +
-        "\n" +
-        window.localStorage.getItem("Verificentro_C-0031-user-token") +
-        "\n-----------------\n";
-      vm.saveStaticDataToFile();
-    },
-    loginSubmit() {
-      let vm = this;
-      console.log("Current User" + vm.username);
-      //console.log(window.localStorage.getItem(vm.username + "-user-token"));
-      console.log(vm.stringPwd);
-      let sub = vm.stringPwd.slice(
-        vm.stringPwd.indexOf(vm.username) + vm.username.length + 1
-      );
-      console.log("El sub " + sub);
-      let trueToken = sub.substring(0, sub.indexOf("\n-----------------"));
-      console.log("El Token:" + trueToken);
-      if (vm.password == trueToken) {
-        console.log("Adelante");
-        vm.route = "/dashboard"
-        this.$q.notify({
-          message: "Bienvenido "+vm.username,
-        });
-        vm.$router.push("/dashboard")
-        //to = dashboard
+      //Autenticando al usuario
+      if (vm.users.includes(vm.username) && vm.password == vm.username) {
+        console.log("BIENVENIDO USUARIO ====>", vm.username);
+        lockr.set("userId",vm.username)
+        let flag = 1
+        let index = 0
+        while (flag){
+           let data = await vm.createUsers(vm.username + "_",index)
+          //El usuario ya existe en el ledger y se va a registrar en la BD
+          console.log(data)
+          if (data.data.message.includes("fabric-ca request register failed")) {
+            debugger
+            index++
+            await vm.createUsers(vm.username.substring(0,vm.username.lastIndexOf("_")+1), index)
+          } else {
+            debugger
+            console.log("Usuario nuevo " + vm.username );
+            flag = 0
+            console.log("Soy el Token actual====>",data.data.token);
+            lockr.set("currentToken",data.data.token)
+            debugger
+            vm.$router.push("/dashboard");
+          }
+        }
       } else {
-        alert("Credenciales incorrectas");
-        //to = ./
+        alert("Usuario o contraseña incorrecto");
+        vm.password = "";
       }
     },
-    loadTextFromFile(ev) {
+    /*async checkUserExist() {
+      let vm = this;
+      let body = {
+        selector: {
+          user: vm.username,
+        },
+      };
+      const response = await axios.post(
+        "http://localhost:5984/user_front/_find",
+        body,
+        vm.config
+      );
+      if (response.data.docs[0] == undefined) {
+        //No existe el usuario
+        return 0;
+      } else {
+        //Ya existe el usuario
+        return response.data.docs[0];
+      }
+    },*/
+    async createUsers(dinamicUser, index) {
+      let vm = this;
+      let org = "Org" + vm.username.substring(4);
+      let body = {
+        username: dinamicUser + index,
+        orgName: org,
+      };
+      //Creando usuario en el ledger
+      let data = await axios.post("http://localhost:4000/users", body);
+      return data
+    },
+    /*async saveUserBD(user, token) {
+      let vm = this;
+      let body = {
+        user: user,
+        token: token,
+      };
+      debugger;
+      const response = await axios.put(
+        "http://localhost:5984/user_front/new_doc",
+        body,
+        vm.config
+      );
+      console.log("GUARDANDO USAUARIO EN LA BD====>", response);
+    },*/
+
+    /*loadTextFromFile(ev) {
       let vm = this;
       const file = ev.target.files[0];
       //let url = URL.createObjectURL(file)
       const reader = new FileReader();
       reader.onload = (e) => (vm.stringPwd = e.target.result);
       reader.readAsText(file);
-    },
+    },*/
   },
 
   mounted() {
-    let vm = this;
-
+    debugger
     particlesJS("particles-js", {
       particles: {
         number: {

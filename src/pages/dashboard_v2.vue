@@ -43,13 +43,13 @@
           <q-card flat bordered class="">
             <q-card-section class="row">
               <div class="text-h6 col-12">
-                Registro de Auto
+                Busqueda de Auto
                 <q-btn
                   flat
                   dense
                   icon="fas fa-download"
                   class="float-right"
-                  @click="SaveImage('line')"
+                  @click="findCar"
                   :color="!$q.dark.isActive ? 'grey-8' : 'white'"
                 >
                   <q-tooltip>Download</q-tooltip>
@@ -65,31 +65,8 @@
                 <q-list>
                   <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Marca</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.marca"
-                        label="Marca"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Modelo</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.modelo"
-                        label="Modelo"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
                       <q-item-label class="q-pb-xs">Placas</q-item-label>
                       <q-input
-                        dense
                         outlined
                         v-model="deposit.placas"
                         label="Placas"
@@ -101,9 +78,9 @@
                   <q-btn
                     color="primary"
                     icon-right="archive"
-                    label="Registrar Auto"
+                    label="Buscar Auto"
                     no-caps
-                    @click="exportTable"
+                    @click="findCar"
                   />
                 </center>
               </q-form>
@@ -142,6 +119,7 @@
                         outlined
                         v-model="deposit.tecnicoid"
                         label="Nombre y ID"
+                        disable
                       />
                     </q-item-section>
                   </q-item>
@@ -151,8 +129,9 @@
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.odometroid"
+                        v-model="this.deposit.odometroid"
                         label="ID"
+                        disable
                       />
                     </q-item-section>
                   </q-item>
@@ -166,6 +145,7 @@
                         outlined
                         v-model="deposit.co"
                         label="CO Registrado"
+                        disable
                       />
                     </q-item-section>
                   </q-item>
@@ -179,6 +159,7 @@
                         outlined
                         v-model="deposit.co2"
                         label="CO2 Registrado"
+                        disable
                       />
                     </q-item-section>
                   </q-item>
@@ -190,6 +171,7 @@
                         outlined
                         v-model="deposit.o2"
                         label="O2 Registrado"
+                        disable
                       />
                     </q-item-section>
                   </q-item>
@@ -203,30 +185,143 @@
                         outlined
                         v-model="deposit.noxppm"
                         label="NOX ppm"
+                        disable
                       />
                     </q-item-section>
                   </q-item>
                   <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Carga HP</q-item-label>
+                      <q-item-label class="q-pb-xs">Hidrocarburos</q-item-label>
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.cargahp"
-                        label="HP Registrado"
+                        v-model="deposit.hidrocarburo"
+                        label="HC x pmm"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs">Lambda</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.lambda"
+                        label="Lambda"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs">Tapa Gasolina</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.tapagasolina"
+                        label="Tapa Gasolina"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Bayoneta de Aceite</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.bayonetaaceite"
+                        label="Bayoneta de Aceite"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Filtro de Aire</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.filtroaire"
+                        label="Filtro de Aire"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Tubo de Escape</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.tuboescape"
+                        label="Tubo de Escape"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs">Llantas</q-item-label>
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.ruedas"
+                        label="Llantas"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Tapon de Radiador</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.taponradiador"
+                        label="Tapon de Radiador"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Manguera de Vacio</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.mangueravacio"
+                        label="Manguera de Vacio"
+                        disable
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item>
+                    <q-item-section>
+                      <q-item-label class="q-pb-xs"
+                        >Luces Traceras y Delanteras</q-item-label
+                      >
+                      <q-input
+                        dense
+                        outlined
+                        v-model="deposit.lucestyd"
+                        label="Luces Traceras y Delanteras"
+                        disable
                       />
                     </q-item-section>
                   </q-item>
                 </q-list>
-                <center>
-                  <q-btn
-                    color="primary"
-                    icon-right="archive"
-                    label="Registrar Auto"
-                    no-caps
-                    @click="addCar"
-                  />
-                </center>
               </q-form>
             </q-card-section>
           </q-card>
@@ -662,6 +757,73 @@ export default {
     },
   },
   methods: {
+    async findCar() {
+      let vm = this;
+      //vm.deposit = {}
+      var username = "admin";
+      var password = "adminpw";
+      if(vm.deposit.placas){
+        //Busqueda por Placas
+      let body = {
+        selector: { placas: vm.deposit.placas },
+      };
+      let config = {
+        auth: {
+          username: username,
+          password: password,
+        },
+      };
+      console.log("Deposit " + vm.deposit);
+      const response = await axios.post(
+        "http://localhost:5984/mychannel_fabcar/_find",
+        body,
+        config
+      );
+      console.log("Respuesta de la busqueda por placas===>", response);
+      if (response.data.docs.length == 0) {
+        this.$q.notify({
+          message: "No se han encontrado registros para " + vm.deposit.placas,
+        });
+        vm.deposit = {}
+      } else {
+        //Llenando los valores de la busqueda
+        vm.deposit.anio = response.data.docs[0].anio;
+        vm.deposit.bayonetaaceite = response.data.docs[0].bayonetaaceite;
+        vm.deposit.ccvvalid = response.data.docs[0].ccvvalid;
+        vm.deposit.co = response.data.docs[0].co;
+        vm.deposit.co2 = response.data.docs[0].co2;
+        vm.deposit.createdate = response.data.docs[0].createdate;
+        vm.deposit.filtroaire = response.data.docs[0].filtroaire;
+        vm.deposit.hidrocarburo = response.data.docs[0].hidrocarburo;
+        vm.deposit.id = response.data.docs[0].id;
+        vm.deposit.lambda = response.data.docs[0].lambda;
+        vm.deposit.lineaverifica = response.data.docs[0].lineaverifica;
+        vm.deposit.lucestyd = response.data.docs[0].lucestyd;
+        vm.deposit.mangueravacio = response.data.docs[0].mangueravacio;
+        vm.deposit.marca = response.data.docs[0].marca;
+        vm.deposit.modelo = response.data.docs[0].modelo;
+        vm.deposit.noxppm = response.data.docs[0].noxppm;
+        vm.deposit.o2 = response.data.docs[0].o2;
+        vm.deposit.odometroid = response.data.docs[0].odometroid;
+        vm.deposit.placas = response.data.docs[0].placas;
+        vm.deposit.ruedas = response.data.docs[0].ruedas;
+        vm.deposit.status = response.data.docs[0].status;
+        vm.deposit.tapagasolina = response.data.docs[0].tapagasolina;
+        vm.deposit.taponradiador = response.data.docs[0].taponradiador;
+        vm.deposit.tecnicoid = response.data.docs[0].tecnicoid;
+        vm.deposit.tuboescape = response.data.docs[0].tuboescape;
+        vm.deposit.updatedate = response.data.docs[0].updatedate;
+        vm.deposit.validadorid = response.data.docs[0].validadorid;
+        vm.deposit.verificentroid = response.data.docs[0].verificentroid;
+        console.log("Objeto deposit ===>", vm.deposit);
+        vm.$forceUpdate();
+      }
+      }else{
+         this.$q.notify({
+          message: "Favor de ingresar placas",
+        });
+      }
+    },
     SaveImage(type) {
       const linkSource = this.$refs[type].getDataURL();
       const downloadLink = document.createElement("a");
@@ -671,29 +833,6 @@ export default {
       downloadLink.download = type + ".png";
       downloadLink.click();
     },
-    addCar() {
-      let vm = this;
-      let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDE4ODg1NTEsInVzZXJuYW1lIjoidGVzdDIyMSIsIm9yZ05hbWUiOiJPcmcyIiwiaWF0IjoxNjQxODUyNTUxfQ.51o7-aPbg3SKBfVwUOBALsA1fvZ7Ou-T01wesRaZQ7Q";
-      vm.deposit.verificentroid = "V1"
-      vm.deposit.validadorid = "V24"
-      vm.deposit.status = "Por validar"
-      vm.deposit.id = vm.autoId++;
-      //let arg = ["{\"id\":\"7\",\"marca\":\"VW\",\"modelo\":\"Jetta 2011\",\"placas\":\"398-SKT\",\"verificentroid\":\"V1\",\"tecnicoid\":\"T1\",\"odometroid\":\"Od1\",\"validadorid\":\"V4\",\"status\":\"Calcomania 0\",\"co\":\"0.1\",\"co2\":\"14.7\",\"o2\":\"0.1\",\"noxppm\":\"106\",\"cargahp\":\"12.2\"}"]
-      let arg = ["{\"id\":\""+vm.deposit.id+"\",\"marca\":\""+vm.deposit.marca+"\",\"modelo\":\""+vm.deposit.modelo+"\",\"placas\":\""+vm.deposit.placas+"\",\"verificentroid\":\""+vm.deposit.verificentroid+"\",\"tecnicoid\":\""+vm.deposit.tecnicoid+"\",\"odometroid\":\""+vm.deposit.odometroid+"\",\"validadorid\":\""+vm.deposit.validadorid+"\",\"status\":\""+vm.deposit.status+"\",\"co\":\""+vm.deposit.co+"\",\"co2\":\""+vm.deposit.co2+"\",\"o2\":\""+vm.deposit.o2+"\",\"noxppm\":\""+vm.deposit.noxppm+"\",\"cargahp\":\""+vm.deposit.cargahp+"\"}"]
-      console.log(vm.deposit)
-      let body = {
-        "fcn": "CreateCar",
-        "chaincodeName":"fabcar",
-        "channelName": "mychannel",
-        "args": arg
-      };
-      let config = {
-        headers: { Authorization: `Bearer ${token}` }
-      };
-      console.log("Deposit "+ vm.deposit);
-      axios.post("http://localhost:4000/channels/mychannel/chaincodes/fabcar", body,config).then(console.log).catch(console.log)
-      vm.deposit = {}
-    }
   },
 };
 </script>

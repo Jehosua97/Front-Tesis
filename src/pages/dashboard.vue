@@ -1,6 +1,10 @@
 <template>
   <q-page>
     <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
+      <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
+      </div>
+    </div>
+    <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
         <q-card>
           <q-card-section
@@ -49,7 +53,6 @@
                   dense
                   icon="fas fa-download"
                   class="float-right"
-                  @click="addCar"
                   :color="!$q.dark.isActive ? 'grey-8' : 'white'"
                 >
                   <q-tooltip>Download</q-tooltip>
@@ -121,39 +124,9 @@
             </q-card-section>
           </q-card>
           <br />
-          <q-card flat bordered class="">
-            <q-card-section class="row">
-              <div class="text-h6 col-12">
-                Verifición de Multas
-                <q-btn
-                  flat
-                  dense
-                  class="float-right"
-                  :color="!$q.dark.isActive ? 'grey-8' : 'white'"
-                >
-                  <img src="../../assets/success.svg" height="35" />
-                </q-btn>
-              </div>
-            </q-card-section>
-
-            <q-separator inset></q-separator>
-            <q-card-section>
-              <q-form>
-                <center>
-                  <q-btn
-                    color="primary"
-                    icon-right="archive"
-                    label="Validar Auto"
-                    no-caps
-                    @click="ConectDB"
-                  />
-                </center>
-              </q-form>
-            </q-card-section>
-          </q-card>
         </div>
 
-        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
+        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" v-if="insertAllData">
           <q-card flat bordered class="">
             <q-card-section class="row">
               <div class="text-h6 col-12">
@@ -394,7 +367,8 @@
 import Vue from "vue";
 import IEcharts from "vue-echarts-v3/src/full.js";
 import axios from "axios";
-
+import store from "./store";
+import lockr from "lockr";
 Vue.component("IEcharts", IEcharts);
 
 function wrapCsvValue(val, formatFn) {
@@ -412,9 +386,10 @@ export default {
   data() {
     return {
       arrayId: [],
-      maxId:-1,
+      maxId: -1,
       autoId: 0,
       deposit: {},
+      insertAllData: false,
       options: [
         "National Bank",
         "Bank of Asia",
@@ -531,6 +506,12 @@ export default {
     };
   },
   computed: {
+    userId(){
+      return lockr.get("userId")
+    },
+    currentToken(){
+      return lockr.get("currentToken")
+    },
     barOptions() {
       return {
         grid: {
@@ -776,12 +757,12 @@ export default {
       let vm = this;
       //Obteniendo el id mayor
       await vm.ConectDB();
-      let max = parseInt(vm.maxId)+1;
-      console.log("Soy max", max)
-      let token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDE4ODg1NTEsInVzZXJuYW1lIjoidGVzdDIyMSIsIm9yZ05hbWUiOiJPcmcyIiwiaWF0IjoxNjQxODUyNTUxfQ.51o7-aPbg3SKBfVwUOBALsA1fvZ7Ou-T01wesRaZQ7Q";
-      vm.deposit.verificentroid = "CVV-1";
-      vm.deposit.validadorid = "V24";
+      let max = parseInt(vm.maxId) + 1;
+      console.log("Valor max actual de la PK en BD==>", max);
+      debugger
+      let token = vm.currentToken;
+      vm.deposit.verificentroid = vm.userId
+      vm.deposit.validadorid = "V"+Math.round(Math.random()*10)
       vm.deposit.status = "Por validar";
       vm.deposit.id = max;
       vm.deposit.createdate = vm.currentDate();
@@ -790,10 +771,10 @@ export default {
         vm.deposit.verificentroid.substring(4, vm.deposit.verificentroid.length)
       );
       vm.deposit.lineaverifica = parseInt(Math.random() * (4 - 1) + 1);
-      console.log("Agregando el registro " + vm.deposit.id);
+      console.log("Agregando el registro al ledger" + vm.deposit.id);
       vm.insertLedger(token);
     },
-    insertLedger(token) {
+    async insertLedger(token) {
       let vm = this;
       let arg = [
         '{"id":"' +
@@ -867,60 +848,77 @@ export default {
         headers: { Authorization: `Bearer ${token}` },
       };
       console.log("Deposit " + vm.deposit);
-      axios
+      debugger
+      await axios
         .post(
           "http://localhost:4000/channels/mychannel/chaincodes/fabcar",
           body,
           config
         )
-        .then(console.log)
-        .catch(console.log);
       vm.deposit = {};
+      console.log("Auto agregado al Ledger");
+      this.$q.notify({
+            message: "Datos ingresados con éxito, favor de esperar autenticación",
+          });
+      vm.insertAllData = false;
     },
     async validarAutoMulta() {
       let vm = this;
-      //Obteniendo el id mayor
+      //Obteniendo el id mayor de todos los registros
       await vm.ConectDB();
-      let max = parseInt(vm.maxId)+1;
-      console.log("Soy max", max)
-      //Aleatoriedad para los que si tienen multas
-      if (Math.round(Math.random() * (10 - 0)) + 0 == 5) {
-        console.log("El auto cuenta con multas por pagar");
-        this.$q.notify({
-          message: "Favor de pagar multas antes de verificar",
-        });
-        let token =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDE4ODg1NTEsInVzZXJuYW1lIjoidGVzdDIyMSIsIm9yZ05hbWUiOiJPcmcyIiwiaWF0IjoxNjQxODUyNTUxfQ.51o7-aPbg3SKBfVwUOBALsA1fvZ7Ou-T01wesRaZQ7Q";
-        vm.deposit.id = max; 
-        vm.deposit.verificentroid = "Dinamicoooo"; //Tomarlo de algun lado
-        vm.deposit.tecnicoid = "--";
-        vm.deposit.odometroid = "--";
-        vm.deposit.validadorid = "--";
-        vm.deposit.lineaverifica = "--";
-        vm.deposit.status = "Rechazado por multas";
-        vm.deposit.co = "--";
-        vm.deposit.co2 = "--";
-        vm.deposit.o2 = "--";
-        vm.deposit.noxppm = "--";
-        vm.deposit.hidrocarburo = "--";
-        vm.deposit.lambda = "--";
-        vm.deposit.ccvvalid = "--";
-        vm.deposit.validadorid = "--";
-        vm.deposit.tapagasolina = "--";
-        vm.deposit.bayonetaaceite = "--";
-        vm.deposit.filtroaire = "--";
-        vm.deposit.tuboescape = "--";
-        vm.deposit.taponradiador = "--";
-        vm.deposit.mangueravacio = "--";
-        vm.deposit.ruedas = "--";
-        vm.deposit.lucestyd = "--";
-        vm.deposit.createdate = vm.currentDate();
-        vm.deposit.updatedate = "--";
-        vm.insertLedger(token);
+      let max = parseInt(vm.maxId) + 1;
+      console.log("Soy el valor max de la PK", max);
+      //Verificando que se metan todos los valores
+      if (
+        vm.deposit.marca &&
+        vm.deposit.modelo &&
+        vm.deposit.placas &&
+        vm.deposit.anio
+      ) {
+        //Aleatoriedad para los que si tienen multas
+        if (Math.round(Math.random() * (10 - 0)) + 0 == 5) {
+          console.log("El auto cuenta con multas por pagar");
+          this.$q.notify({
+            message: "Favor de pagar multas antes de verificar",
+          });
+          let token = vm.currentToken;
+          vm.deposit.id = max;
+          vm.deposit.verificentroid = vm.userId; 
+          vm.deposit.tecnicoid = "--";
+          vm.deposit.odometroid = "--";
+          vm.deposit.validadorid = "--";
+          vm.deposit.lineaverifica = "--";
+          vm.deposit.status = "Rechazado por multas";
+          vm.deposit.co = "--";
+          vm.deposit.co2 = "--";
+          vm.deposit.o2 = "--";
+          vm.deposit.noxppm = "--";
+          vm.deposit.hidrocarburo = "--";
+          vm.deposit.lambda = "--";
+          vm.deposit.ccvvalid = "--";
+          vm.deposit.validadorid = "--";
+          vm.deposit.tapagasolina = "--";
+          vm.deposit.bayonetaaceite = "--";
+          vm.deposit.filtroaire = "--";
+          vm.deposit.tuboescape = "--";
+          vm.deposit.taponradiador = "--";
+          vm.deposit.mangueravacio = "--";
+          vm.deposit.ruedas = "--";
+          vm.deposit.lucestyd = "--";
+          vm.deposit.createdate = vm.currentDate();
+          vm.deposit.updatedate = "--";
+          debugger
+          vm.insertLedger(token);
+        } else {
+          console.log("El auto No tiene multas, adelante");
+          vm.insertAllData = true;
+          this.$q.notify({
+            message: "Sin multas, adelante ",
+          });
+        }
       } else {
-        console.log("El auto No tiene multas, adelante");
         this.$q.notify({
-          message: "Sin multas, adelante ",
+          message: "Favor de llenar todos los campos",
         });
       }
     },
@@ -969,37 +967,36 @@ export default {
       if (randomNumber == currentCVV) {
         vm.asignarCVVValidador(currentCVV);
       } else {
-        var Org = "CVV-" + randomNumber;
+        var Org = "CVV_" + randomNumber;
         return Org;
       }
     },
+    //Busqueda en todo el ledger
     async ConectDB() {
-    let vm = this;
-    var username = 'admin';
-    var password = 'adminpw';
+      let vm = this;
+      var username = "admin";
+      var password = "adminpw";
       let body = {
         selector: {},
       };
       let config = {
         auth: {
-            username: username,
-            password: password
-        }
+          username: username,
+          password: password,
+        },
       };
       console.log("Deposit " + vm.deposit);
-      const response = await axios
-        .post(
-          "http://localhost:5984/mychannel_fabcar/_find",
-          body,
-          config
-        );
-        for(let i = 0; i < response.data.docs.length; i++){
-          vm.arrayId.push(response.data.docs[i]._id);
-        }
-        console.log("Soy el array de id", vm.arrayId)
-        for(let i=0; i< vm.arrayId.length; i++){
-          if(parseInt(vm.arrayId[i]) > vm.maxId)
-              vm.maxId = vm.arrayId[i]
+      const response = await axios.post(
+        "http://localhost:5984/mychannel_fabcar/_find",
+        body,
+        config
+      );
+      for (let i = 0; i < response.data.docs.length; i++) {
+        vm.arrayId.push(response.data.docs[i]._id);
+      }
+      console.log("Soy el array de id", vm.arrayId);
+      for (let i = 0; i < vm.arrayId.length; i++) {
+        if (parseInt(vm.arrayId[i]) > vm.maxId) vm.maxId = vm.arrayId[i];
       }
     },
   },
