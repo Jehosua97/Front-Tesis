@@ -1,665 +1,374 @@
 <template>
-  <q-page class="q-pt-xs">
+  <q-page>
     <div class="q-ma-md">
-      <div class="row q-mb-md q-col-gutter-md">
-        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_1">
-          <q-card class="shadow">
-            <q-card-section class="theme_color q-pa-sm text-dark">
-              <q-item class="q-pb-none q-pt-xs">
-                <q-item-section>
-                  <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">900</q-item-label>
-                  <q-item-label class="text-grey-4">Total Orders</q-item-label>
-                </q-item-section>
+      <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 box_4">
+        <q-page class="q-pa-sm">
+          <q-card>
+            <q-table
+              title="Consulta Global al Libro Mayor"
+              :data="deposit"
+              :hide-header="mode === 'grid'"
+              :columns="columns"
+              row-key="name"
+              :grid="mode == 'grid'"
+              :filter="filter"
+              :pagination.sync="pagination"
+            >
+              <template v-slot:top-right="props">
+                <q-input
+                  outlined
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Search"
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
 
-                <q-item-section side>
-                  <q-icon name="o_shopping_cart" class="box_1" size="60px"></q-icon>
-                </q-item-section>
-              </q-item>
-              <q-item class="q-py-xs" style="min-height: unset">
-                <q-item-section>
-                  <div class="progress-base q-my-sm">
-                    <div class="progress-bar-1" style="width:70%"></div>
-                  </div>
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_2 ">
-          <q-card class="shadow">
-            <q-card-section class="theme_color q-pa-sm text-white">
-              <q-item class="q-pb-none q-pt-xs">
-                <q-item-section>
-                  <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">1050</q-item-label>
-                  <q-item-label class="text-grey-4">Total Expenses</q-item-label>
-                </q-item-section>
-
-                <q-item-section side>
-                  <q-icon name="o_account_balance_wallet" class="box_2" size="60px"></q-icon>
-                </q-item-section>
-              </q-item>
-              <q-item class="q-py-xs" style="min-height: unset">
-                <q-item-section>
-                  <div class="progress-base q-my-sm">
-                    <div class="progress-bar-2" style="width:40%"></div>
-                  </div>
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_3 ">
-          <q-card class="shadow">
-            <q-card-section class="theme_color q-pa-sm text-white">
-              <q-item class="q-pb-none q-pt-xs">
-                <q-item-section>
-                  <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">80 %</q-item-label>
-                  <q-item-label class="text-grey-4">Total Profit</q-item-label>
-                </q-item-section>
-
-                <q-item-section side>
-                  <q-icon name="o_account_balance" class="box_3" size="60px"></q-icon>
-                </q-item-section>
-              </q-item>
-              <q-item class="q-py-xs" style="min-height: unset">
-                <q-item-section>
-                  <div class="progress-base q-my-sm">
-                    <div class="progress-bar-3" style="width:80%"></div>
-                  </div>
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="col-md-3 col-lg-3 col-sm-12 col-xs-12 box_4 ">
-          <q-card class="shadow">
-            <q-card-section class="theme_color q-pa-sm text-white">
-              <q-item class="q-pb-none q-pt-xs">
-                <q-item-section>
-                  <q-item-label class="text-h4" style="font-weight: 500;letter-spacing: 3px;">720</q-item-label>
-                  <q-item-label class="text-grey-4">New Customers</q-item-label>
-                </q-item-section>
-
-                <q-item-section side>
-                  <q-icon name="o_people" class="box_4" size="60px"></q-icon>
-                </q-item-section>
-              </q-item>
-              <q-item class="q-py-xs" style="min-height: unset">
-                <q-item-section>
-                  <div class="progress-base q-my-sm">
-                    <div class="progress-bar-4" style="width:30%"></div>
-                  </div>
-                </q-item-section>
-              </q-item>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
-      <div class="row q-col-gutter-md q-pt-md">
-        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-          <q-card flat bordered class="shadow theme_color q-pa-none q-ma-none">
-            <q-card-section>
-              <div  style="font-weight: 600;letter-spacing: 1px;font-size: 16px;">Key Competitors
-                <q-btn flat dense icon="fas fa-download" class="float-right" @click="SaveImage('key_competitors')"
-                       color="grey-6">
-                  <q-tooltip>Download</q-tooltip>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                  @click="props.toggleFullscreen"
+                  v-if="mode === 'list'"
+                >
+                  <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
+                    >{{
+                      props.inFullscreen
+                        ? "Exit Fullscreen"
+                        : "Toggle Fullscreen"
+                    }}
+                  </q-tooltip>
                 </q-btn>
-                
-              </div>
-            </q-card-section>
 
-            <q-separator class="full-width" inset></q-separator>
-
-            <q-card-section>
-              
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
-          <q-card flat bordered class="shadow theme_color q-pa-none q-ma-none">
-            <q-card-section>
-              <div  style="font-weight: 600;letter-spacing: 1px;font-size: 16px;">Sales Pipeline by
-                Sales Rep
-                <q-btn flat dense icon="fas fa-download" class="float-right" @click="SaveImage('sales_pipeline')"
-                       color="grey-6">
-                  <q-tooltip>Download</q-tooltip>
+                <q-btn
+                  flat
+                  round
+                  dense
+                  :icon="mode === 'grid' ? 'list' : 'grid_on'"
+                  @click="
+                    mode = mode === 'grid' ? 'list' : 'grid';
+                    separator = mode === 'grid' ? 'none' : 'horizontal';
+                  "
+                  v-if="!props.inFullscreen"
+                >
+                  <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
+                    >{{ mode === "grid" ? "List" : "Grid" }}
+                  </q-tooltip>
                 </q-btn>
-              </div>
-            </q-card-section>
 
-            <q-separator class="full-width" inset></q-separator>
-
-            <q-card-section>
-              <IEcharts ref="sales_pipeline" :option="stackedBarOptions" :resizable="true" style="height:270px"/>
-            </q-card-section>
+                <q-btn
+                  color="primary"
+                  icon-right="archive"
+                  label="Export to csv"
+                  no-caps
+                  @click="exportDepositsTable"
+                />
+              </template>
+              <template v-slot:body-cell-detalles="propsDet">
+                <q-td :props="propsDet">
+                  <q-btn
+                    @click="employee_dialog = true"
+                    dense
+                    round
+                    color="secondary"
+                    icon="pageview"
+                  />
+                </q-td>
+              </template>
+              <template v-slot:body-cell-status="props">
+                <q-td :props="props">
+                  <q-chip
+                    :color="
+                      props.row.status == 'Por validar'
+                        ? 'orange'
+                        : props.row.status == 'Rechazado'
+                        ? 'red'
+                        : 'green'
+                    "
+                    text-color="white"
+                    dense
+                    class="text-weight-bolder"
+                    square
+                    style="width: 85px"
+                    >{{ props.row.status }}
+                  </q-chip>
+                </q-td>
+              </template>
+            </q-table>
           </q-card>
-        </div>
+          <q-dialog v-model="employee_dialog" >
+            <q-card class="my-card" flat bordered>
+              <q-card-section>
+                <div class="text-h6">
+                  Detalles de la prueba aplicada
+                  <q-btn
+                    round
+                    flat
+                    dense
+                    icon="close"
+                    class="float-right"
+                    color="grey-8"
+                    v-close-popup
+                  ></q-btn>
+                </div>
+              </q-card-section>
+              <q-card-section horizontal>
+                <q-card-section class="q-pt-xs">
+                  <div class="text-overline">US Region</div>
+                  <div class="text-h5 q-mt-sm q-mb-xs">Mayank Patel</div>
+                  <div class="text-caption text-grey">
+                    Sales and Marketing Executive | Graduate and past committee
+                    | Keynote speaker on Selling and Recruiting Topics
+                  </div>
+                </q-card-section>
+
+                <q-card-section class="col-5 flex flex-center">
+                  <q-img
+                    class="rounded-borders"
+                    src="https://cdn.quasar.dev/img/boy-avatar.png"
+                  />
+                </q-card-section>
+              </q-card-section>
+
+              <q-separator />
+              <q-card-section>
+                Assessing clients needs and present suitable promoted products.
+                Liaising with and persuading targeted doctors to prescribe our
+                products utilizing effective sales skills.
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </q-page>
       </div>
     </div>
   </q-page>
 </template>
 
 <script>
-    import Vue from 'vue';
-    import IEcharts from 'vue-echarts-v3/src/full.js';
-    import echarts from 'echarts'
-    import {exportFile} from 'quasar';
+import { exportFile } from "quasar";
+import axios from "axios";
+import lockr from "lockr";
 
-    Vue.component('IEcharts', IEcharts);
+function wrapCsvValue(val, formatFn) {
+  let formatted = formatFn !== void 0 ? formatFn(val) : val;
 
-    function wrapCsvValue(val, formatFn) {
-        let formatted = formatFn !== void 0
-            ? formatFn(val)
-            : val
+  formatted =
+    formatted === void 0 || formatted === null ? "" : String(formatted);
 
-        formatted = formatted === void 0 || formatted === null
-            ? ''
-            : String(formatted)
+  formatted = formatted.split('"').join('""');
 
-        formatted = formatted.split('"').join('""')
+  return `"${formatted}"`;
+}
 
-        return `"${formatted}"`
-    }
-
-    export default {
-        data() {
-            return {
-                areaChartOption: {
-                    legend: {
-                        textStyle: {
-                            color: 'white',
-                        }
-                    },
-                    grid: {
-                        bottom: '9%',
-                        left: '9%',
-                        top: '10%',
-                        right: '5%',
-                        show: true
-                    },
-                    tooltip: {show: true},
-                    xAxis: {
-                        type: 'category',
-                        data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'Jul', 'Aug', 'Sep'],
-                        axisLine: {
-                            lineStyle: {
-                                color: 'grey'
-                            },
-                            show: false
-                        },
-                        axisTick: {
-                            show: false
-                        },
-                        axisLabel: {
-                            color: 'white'
-                        }
-                    },
-                    yAxis: {
-                        type: 'value',
-                        axisLine: {
-                            lineStyle: {
-                                color: 'grey'
-                            },
-                            show: false
-                        },
-                        axisTick: {
-                            show: false
-                        },
-                        axisLabel: {
-                            color: 'white'
-                        }
-                    },
-                    series: [{
-                        name: 'Sales',
-                        data: [0, 600, 300, 700, 700, 1330, 600, 500, 0],
-                        type: 'line',
-                        areaStyle: {},
-                        smooth: true,
-                        color: '#e4a3e2'
-                    },
-                        {
-                            name: 'Goals',
-                            data: [0, 300, 600, 400, 1000, 730, 840, 300, 0],
-                            type: 'line',
-                            areaStyle: {},
-                            smooth: true,
-                            color: '#25c0ea'
-                        }
-                    ]
-                },
-                pieOptions: {
-                    tooltip: {
-                        show: true
-                    },
-                    legend: {
-                        orient: 'horizontal',
-                        bottom: 0,
-                        width: 300,
-                        textStyle: {
-                            color: 'white',
-                        }
-                    },
-                    color: ['#66e398', '#cc9dd1', '#f0d377'],
-                    series: [
-                        {
-                            name: 'Competitor',
-                            type: 'pie',
-                            radius: ['40%', '70%'],
-                            avoidLabelOverlap: false,
-                            label: {
-                                normal: {
-                                    show: true,
-                                    position: 'inner',
-                                    formatter: function (param, index) {
-                                        return param.value + ' %'
-                                    }
-                                },
-                                emphasis: {
-                                    show: true,
-                                    textStyle: {
-                                        fontSize: '20',
-                                        fontWeight: 'bold'
-                                    }
-                                }
-                            },
-                            labelLine: {
-                                normal: {
-                                    show: false
-                                }
-                            },
-                            selectedMode: 'single',
-                            data: [
-                                {value: 40, name: 'Product 1', selected: true},
-                                {value: 20, name: 'Competitor 1', selected: false},
-                                {value: 15, name: 'Competitor 2', selected: false},
-                            ]
-                        }
-                    ]
-                },
-                stackedBarOptions: {
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer:
-                            {
-                                type: 'shadow'
-                            },
-                        backgroundColor: 'rgba(50,50,50,0.9)',
-
-                    },
-                    legend: {
-                        textStyle: {
-                            color: 'white',
-                        }
-                    },
-                    color: ['#cc9dd1', '#9cebaf', '#41eff7'],
-                    // legend: {
-                    //     y: "bottom",
-                    //     data: [{name: 'Territory Sales', icon: 'circle'}, {
-                    //         name: 'Remaining Nation Sales',
-                    //         icon: 'circle'
-                    //     }]
-                    // },
-                    grid:
-                        {
-                            bottom: '3%',
-                            left: '15%',
-                            top: '18%',
-                            right: '5%',
-                            show: true
-                        },
-                    calculable: true,
-                    xAxis:
-                        {
-                            type: 'value',
-                            position: 'top',
-                            axisLine: {
-                                show: false
-                            },
-                            axisTick: {
-                                show: false
-                            },
-                            axisLabel: {
-                                formatter: function (value, index) {
-                                    return '$' + value;
-                                },
-                                color: 'white'
-                            }
-                        },
-                    yAxis: [
-                        {
-                            type: 'category',
-                            data: ['Alex Morrow', 'Joanna Carter', 'Jimmy Joanna', 'Mack Hales'],
-                            axisLine: {
-                                show: false
-                            },
-                            axisTick: {
-                                show: false
-                            },
-                            axisLabel: {
-                                fontSize: 12,
-                                color: 'white'
-                            }
-                        }
-                    ],
-                    series:
-                        [{
-                            name: 'Qualification',
-                            type: 'bar',
-                            stack: 'A',
-                            data: [300, 350, 400, 500]
-
-                        }, {
-                            name: 'Discovery',
-                            type: 'bar',
-                            stack: 'A',
-                            data: [100, 180, 250, 300]
-
-                        }, {
-                            name: 'Quote',
-                            type: 'bar',
-                            stack: 'A',
-                            data: [100, 120, 200, 220]
-
-                        }]
-                },
-                filter: '',
-                mode: 'list',
-                columns: [
-                    {name: 'activity_id', align: 'left', label: 'Activity ID', field: 'activity_id', sortable: true},
-                    {
-                        name: 'desc',
-                        required: true,
-                        label: 'Activity Name',
-                        align: 'left',
-                        field: row => row.name,
-                        sortable: true
-                    },
-                    {name: 'regarding', align: 'left', label: 'Regarding', field: 'regarding', sortable: true},
-                    {name: 'owner', align: 'left', label: 'Owner', field: 'owner', sortable: true},
-                    {name: 'status', align: 'center', label: 'Status', field: 'status', sortable: true},
-                    {
-                        name: 'creation_date',
-                        align: 'left',
-                        label: 'Creation Date',
-                        field: 'creation_date',
-                        sortable: true
-                    }
-                ],
-                data: [
-                    {
-                        activity_id: "C001",
-                        name: 'Advanced communications',
-                        regarding: 'Presentation',
-                        owner: 'John',
-                        status: 'Pending',
-                        creation_date: '12-09-2019'
-                    },
-                    {
-                        activity_id: "C002",
-                        name: 'New drug discussion',
-                        regarding: 'Meeting',
-                        owner: 'John',
-                        status: 'Completed',
-                        creation_date: '09-02-2019'
-                    },
-                    {
-                        activity_id: "C003",
-                        name: 'Universal services discussion',
-                        regarding: 'Meeting',
-                        owner: 'John',
-                        status: 'Completed',
-                        creation_date: '03-25-2019'
-                    },
-                    {
-                        activity_id: "C004",
-                        name: 'Add on business',
-                        regarding: 'Business',
-                        owner: 'John',
-                        status: 'Pending',
-                        creation_date: '03-18-2019'
-                    },
-                    {
-                        activity_id: "C005",
-                        name: 'Promotional Activity',
-                        regarding: 'Personal',
-                        owner: 'John',
-                        status: 'Completed',
-                        creation_date: '04-09-2019'
-                    },
-                ],
-                pagination: {
-                    rowsPerPage: 10
-                }
-            }
+export default {
+  data() {
+    return {
+      invoice: {},
+      employee_dialog: false,
+       columns: [
+        {
+          name: "niv",
+          align: "left",
+          label: "NIV",
+          field: "niv",
+          sortable: true,
         },
-        computed: {
-            getBarChartOptions() {
-                let dataAxis = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June'];
-                let market_share_data = [220, 120, 199, 234, 200, 330];
-                let growth_data = [180, 182, 120, 290, 290, 320];
-                return {
-                    xAxis: {
-                        data: dataAxis,
-                        axisLabel: {
-                            inside: false,
-                            color: 'white'
-                        },
-                        axisTick: {
-                            show: false
-                        },
-                        axisLine: {
-                            lineStyle: {
-                                color: 'grey'
-                            },
-                            show: false
-                        },
-                        z: 10
-                    },
-                    tooltip: {},
-                    legend: {
-                        show: true,
-                        textStyle: {
-                            color: 'white',
-                        }
-                    },
-                    grid: {
-                        bottom: '9%',
-                        left: '9%',
-                        top: '10%',
-                        right: '5%',
-                        show: true
-                    },
-                    yAxis: {
-                        axisLine: {
-                            lineStyle: {
-                                color: 'grey'
-                            },
-                            show: false
-                        },
-                        axisTick: {
-                            show: false
-                        },
-                        axisLabel: {
-                            color: 'white'
-                        }
-                    },
-                    series: [
-                        {
-                            name: 'Market Share',
-                            type: 'bar',
-                            barGap: '15%',
-                            itemStyle: {
-                                normal: {
-                                    color: new echarts.graphic.LinearGradient(
-                                        0, 0, 0, 1,
-                                        [
-                                            {offset: 0, color: '#f6c7a3'},
-                                            {offset: 0.5, color: '#f6ac71'},
-                                            {offset: 1, color: '#f6ac71'}
-                                        ]
-                                    )
-                                },
-                                emphasis: {
-                                    color: new echarts.graphic.LinearGradient(
-                                        0, 0, 0, 1,
-                                        [
-                                            {offset: 0, color: '#f6ac71'},
-                                            {offset: 0.7, color: '#f6ac71'},
-                                            {offset: 1, color: '#f6c7a3'}
-                                        ]
-                                    )
-                                }
-                            },
-                            data: market_share_data
-                        },
-                        {
-                            name: 'Growth',
-                            type: 'bar',
-                            itemStyle: {
-                                normal: {
-                                    color: new echarts.graphic.LinearGradient(
-                                        0, 0, 0, 1,
-                                        [
-                                            {offset: 0, color: '#b08eb3'},
-                                            {offset: 0.5, color: '#a773b3'},
-                                            {offset: 1, color: '#ad6bb3'}
-                                        ]
-                                    )
-                                },
-                                emphasis: {
-                                    color: new echarts.graphic.LinearGradient(
-                                        0, 0, 0, 1,
-                                        [
-                                            {offset: 0, color: '#ad6bb3'},
-                                            {offset: 0.7, color: '#a773b3'},
-                                            {offset: 1, color: '#b08eb3'}
-                                        ]
-                                    )
-                                }
-                            },
-                            data: growth_data
-                        }
-                    ]
-                }
-            }
+        {
+          name: "placas",
+          align: "left",
+          label: "Placas",
+          field: "placas",
+          sortable: true,
         },
-        methods: {
-            SaveImage(type) {
-                const linkSource = this.$refs[type].getDataURL();
-                const downloadLink = document.createElement('a');
-                document.body.appendChild(downloadLink);
-                downloadLink.href = linkSource;
-                downloadLink.target = '_self';
-                downloadLink.download = type + '.png';
-                downloadLink.click();
-            },
-            exportTable() {
-                // naive encoding to csv format
-                const content = [this.columns.map(col => wrapCsvValue(col.label))].concat(
-                    this.data.map(row => this.columns.map(col => wrapCsvValue(
-                        typeof col.field === 'function'
-                            ? col.field(row)
-                            : row[col.field === void 0 ? col.name : col.field],
-                        col.format
-                    )).join(','))
-                ).join('\r\n')
-
-                const status = exportFile(
-                    'activity.csv',
-                    content,
-                    'text/csv'
+        {
+          name: "marca",
+          required: true,
+          label: "Marca",
+          align: "left",
+          field: "marca",
+          sortable: true,
+        },
+        {
+          name: "modelo",
+          align: "left",
+          label: "Modelo",
+          field: "modelo",
+          sortable: true,
+        },
+        {
+          name: "createdate",
+          align: "left",
+          label: "Fecha de ingreso",
+          field: "createdate",
+          sortable: true,
+        },
+        {
+          name: "updatedate",
+          align: "left",
+          label: "Fecha de Validación",
+          field: "updatedate",
+          sortable: true,
+        },
+        {
+          name: "hologramaObtenido",
+          align: "left",
+          label: "Holograma Obtenido",
+          field: "hologramaObtenido",
+          sortable: true,
+        },
+         {
+          name: "verificentroid",
+          align: "left",
+          label: "CVV Origen",
+          field: "verificentroid",
+          sortable: true,
+        },
+         {
+          name: "ccvvalid",
+          align: "left",
+          label: "CVV Validador",
+          field: "ccvvalid",
+          sortable: true,
+        },
+        {
+          name: "detalles",
+          align: "left",
+          label: "Detalles",
+          field: "detalles",
+          sortable: true,
+        },
+        {
+          name: "status",
+          align: "left",
+          label: "Status",
+          field: "status",
+          sortable: true,
+        },
+      ],
+      deposit: [],
+      pagination: {
+        rowsPerPage: 10,
+      },
+      filter: "",
+      mode: "list",
+      pagination: {
+        rowsPerPage: 10,
+      },
+      options: [
+        "National Bank",
+        "Bank of Asia",
+        "Corporate Bank",
+        "Public Bank",
+      ],
+    };
+  },
+  computed: {
+    userId() {
+      return lockr.get("userId");
+    },
+    currentToken() {
+      return lockr.get("currentToken");
+    },
+  },
+  methods: {
+    exportDepositsTable() {
+      // naive encoding to csv format
+      const content = [this.columns.map((col) => wrapCsvValue(col.label))]
+        .concat(
+          this.deposit.map((row) =>
+            this.columns
+              .map((col) =>
+                wrapCsvValue(
+                  typeof col.field === "function"
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format
                 )
+              )
+              .join(",")
+          )
+        )
+        .join("\r\n");
 
-                if (status !== true) {
-                    this.$q.notify({
-                        message: 'Browser denied file download...',
-                        color: 'negative',
-                        icon: 'warning'
-                    })
-                }
-            }
+      const status = exportFile("deposits.csv", content, "text/csv");
+
+      if (status !== true) {
+        this.$q.notify({
+          message: "Browser denied file download...",
+          color: "negative",
+          icon: "warning",
+        });
+      }
+    },
+    showLoading() {
+      this.$q.loading.show({
+        message: "<b>Demo loading screen, replace your message here<b>",
+      });
+
+      // hiding in 2s
+      this.timer = setTimeout(() => {
+        this.$q.loading.hide();
+        this.timer = void 0;
+      }, 3000);
+    },
+    async findCar() {
+      let vm = this;
+      //vm.deposit = {}
+      var username = "admin";
+      var password = "adminpw";
+      //Busqueda por CVV Validador
+      let body = {
+        selector: { },
+      };
+      let config = {
+        auth: {
+          username: username,
+          password: password,
+        },
+      };
+      debugger;
+      const response = await axios.post(
+        "http://localhost:5984/mychannel_fabcar/_find",
+        body,
+        config
+      );
+      console.log("Respuesta de la busqueda por CVV Validador===>", response);
+      if (response.data.docs.length == 0) {
+        this.$q.notify({
+          message: "No se han encontrado registros para " + vm.userId,
+        });
+        vm.deposit = {};
+      } else {
+        //Llenando los valores de la busqueda
+        for(let i = 1; i < response.data.docs.length; i++){
+          if(response.data.docs[i].status != "Por validar"){
+            vm.deposit.push(response.data.docs[i])
+          }
         }
-    }
+        //vm.deposit = response.data.docs;
+        console.log("Objeto deposit ===>", vm.deposit);
+        debugger;
+        vm.$forceUpdate();
+      }
+    },
+
+    beforeDestroy() {
+      if (this.timer !== void 0) {
+        clearTimeout(this.timer);
+        this.$q.loading.hide();
+      }
+    },
+  },
+  async beforeMount() {
+    let vm = this;
+    await vm.findCar();
+    vm.showLoading();
+  },
+};
 </script>
 
-<style scoped>
-  .box_1 {
-    color: #0dceec;
-  }
-
-  .box_2 {
-    color: #fe434f;
-  }
-
-  .box_3 {
-    color: #15ca20;
-  }
-
-  .box_4 {
-    color: #ff9700;
-  }
-
-  .theme_color {
-    background-color: #343a40 !important
-  }
-
-  .shadow {
-    -webkit-box-shadow: 0 3px 20px rgba(34, 48, 53, 0.81) !important;
-    box-shadow: 0 3px 20px rgba(34, 48, 53, 0.81) !important;
-    border: none !important;
-  }
-
-  .progress-base {
-    height: 8px;
-    border-radius: 3px;
-    background-color: #e9ecef;
-  }
-
-  .progress-bar-1 {
-    height: 8px;
-    border-radius: 3px;
-    background: #17ead9;
-    background: -webkit-linear-gradient(45deg, #17ead9, #6078ea) !important;
-    background: linear-gradient(45deg, #17ead9, #6078ea) !important;
-  }
-
-  .progress-bar-2 {
-    height: 8px;
-    border-radius: 3px;
-    background: #f54ea2;
-    background: -webkit-linear-gradient(45deg, #f54ea2, #ff7676) !important;
-    background: linear-gradient(45deg, #f54ea2, #ff7676) !important;
-  }
-
-  .progress-bar-3 {
-    height: 8px;
-    border-radius: 3px;
-    background: #42e695;
-    background: -webkit-linear-gradient(45deg, #42e695, #3bb2b8) !important;
-    background: linear-gradient(45deg, #42e695, #3bb2b8) !important;
-  }
-
-  .progress-bar-4 {
-    height: 8px;
-    border-radius: 3px;
-    background: #ffdf40;
-    background: -webkit-linear-gradient(45deg, #ffdf40, #ff8359) !important;
-    background: linear-gradient(45deg, #ffdf40, #ff8359) !important;
-  }
-
-  .border-top {
-    border-top: 1px solid #efefef;
-  }
-
-  .chip_pending {
-    background: #ffdf40;
-    background: -webkit-linear-gradient(45deg, #ffdf40, #ff8359) !important;
-    background: linear-gradient(45deg, #ffdf40, #ff8359) !important;
-  }
-
-  .chip_completed {
-    background: #42e695;
-    background: -webkit-linear-gradient(45deg, #42e695, #3bb2b8) !important;
-    background: linear-gradient(45deg, #42e695, #3bb2b8) !important;
-  }
-</style>
+<style scoped></style>

@@ -125,11 +125,148 @@
           </q-card>
         </div>
       </div>
-      <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <employeesalarylist>
-        </employeesalarylist>
-        </div>
+      <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 box_4">
+        <q-page class="q-pa-sm">
+          <q-card>
+            <q-table
+              title="Transacciones por Validar"
+              :data="deposit"
+              :hide-header="mode === 'grid'"
+              :columns="columns"
+              row-key="name"
+              :grid="mode == 'grid'"
+              :filter="filter"
+              :pagination.sync="pagination"
+            >
+              <template v-slot:top-right="props">
+                <q-input
+                  outlined
+                  dense
+                  debounce="300"
+                  v-model="filter"
+                  placeholder="Search"
+                >
+                  <template v-slot:append>
+                    <q-icon name="search" />
+                  </template>
+                </q-input>
+
+                <q-btn
+                  flat
+                  round
+                  dense
+                  :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                  @click="props.toggleFullscreen"
+                  v-if="mode === 'list'"
+                >
+                  <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
+                    >{{
+                      props.inFullscreen
+                        ? "Exit Fullscreen"
+                        : "Toggle Fullscreen"
+                    }}
+                  </q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  flat
+                  round
+                  dense
+                  :icon="mode === 'grid' ? 'list' : 'grid_on'"
+                  @click="
+                    mode = mode === 'grid' ? 'list' : 'grid';
+                    separator = mode === 'grid' ? 'none' : 'horizontal';
+                  "
+                  v-if="!props.inFullscreen"
+                >
+                  <q-tooltip :disable="$q.platform.is.mobile" v-close-popup
+                    >{{ mode === "grid" ? "List" : "Grid" }}
+                  </q-tooltip>
+                </q-btn>
+
+                <q-btn
+                  color="primary"
+                  icon-right="archive"
+                  label="Export to csv"
+                  no-caps
+                  @click="exportDepositsTable"
+                />
+              </template>
+              <template v-slot:body-cell-detalles="propsDet">
+                <q-td :props="propsDet">
+                  <q-btn
+                    @click="employee_dialog = true"
+                    dense
+                    round
+                    color="secondary"
+                    icon="pageview"
+                  />
+                </q-td>
+              </template>
+              <template v-slot:body-cell-status="props">
+                <q-td :props="props">
+                  <q-chip
+                    :color="
+                      props.row.status == 'Por validar'
+                        ? 'orange'
+                        : props.row.status == 'Rechazado'
+                        ? 'red'
+                        : 'green'
+                    "
+                    text-color="white"
+                    dense
+                    class="text-weight-bolder"
+                    square
+                    style="width: 85px"
+                    >{{ props.row.status }}
+                  </q-chip>
+                </q-td>
+              </template>
+            </q-table>
+          </q-card>
+          <q-dialog v-model="employee_dialog" >
+            <q-card class="my-card" flat bordered>
+              <q-card-section>
+                <div class="text-h6">
+                  Detalles de la prueba aplicada
+                  <q-btn
+                    round
+                    flat
+                    dense
+                    icon="close"
+                    class="float-right"
+                    color="grey-8"
+                    v-close-popup
+                  ></q-btn>
+                </div>
+              </q-card-section>
+              <q-card-section horizontal>
+                <q-card-section class="q-pt-xs">
+                  <div class="text-overline">US Region</div>
+                  <div class="text-h5 q-mt-sm q-mb-xs">Mayank Patel</div>
+                  <div class="text-caption text-grey">
+                    Sales and Marketing Executive | Graduate and past committee
+                    | Keynote speaker on Selling and Recruiting Topics
+                  </div>
+                </q-card-section>
+
+                <q-card-section class="col-5 flex flex-center">
+                  <q-img
+                    class="rounded-borders"
+                    src="https://cdn.quasar.dev/img/boy-avatar.png"
+                  />
+                </q-card-section>
+              </q-card-section>
+
+              <q-separator />
+              <q-card-section>
+                Assessing clients needs and present suitable promoted products.
+                Liaising with and persuading targeted doctors to prescribe our
+                products utilizing effective sales skills.
+              </q-card-section>
+            </q-card>
+          </q-dialog>
+        </q-page>
       </div>
     </div>
   </q-page>
@@ -138,7 +275,7 @@
 <script>
 import { exportFile } from "quasar";
 import axios from "axios";
-import employeesalarylist from "./employee_salary_list.vue"
+import lockr from "lockr";
 
 function wrapCsvValue(val, formatFn) {
   let formatted = formatFn !== void 0 ? formatFn(val) : val;
@@ -154,24 +291,14 @@ function wrapCsvValue(val, formatFn) {
 export default {
   data() {
     return {
-      filter: "",
-      mode: "list",
-      deposit: {},
-      pagination: {
-        rowsPerPage: 10,
-      },
-      options: [
-        "National Bank",
-        "Bank of Asia",
-        "Corporate Bank",
-        "Public Bank",
-      ],
+      invoice: {},
+      employee_dialog: false,
       columns: [
         {
-          name: "Id",
+          name: "niv",
           align: "left",
-          label: "ID",
-          field: "id",
+          label: "NIV",
+          field: "niv",
           sortable: true,
         },
         {
@@ -183,8 +310,9 @@ export default {
         },
         {
           name: "marca",
-          align: "left",
+          required: true,
           label: "Marca",
+          align: "left",
           field: "marca",
           sortable: true,
         },
@@ -196,61 +324,65 @@ export default {
           sortable: true,
         },
         {
-          name: "Fecha",
+          name: "createdate",
           align: "left",
-          label: "Fecha",
+          label: "Fecha de ingreso",
           field: "createdate",
           sortable: true,
         },
         {
-          name: "status",
-          label: "Status",
+          name: "updatedate",
           align: "left",
+          label: "Fecha de Validación",
+          field: "updatedate",
+          sortable: true,
+        },
+        {
+          name: "detalles",
+          align: "left",
+          label: "Detalles",
+          field: "detalles",
+          sortable: true,
+        },
+        {
+          name: "status",
+          align: "left",
+          label: "Status",
           field: "status",
           sortable: true,
         },
       ],
-      data: [
-        {
-          id: "1",
-          placas:"",
-          marca:"",
-          modelo:"",
-          createdate:"",
-          status:""
-        },
-        {
-          id: "1",
-          description: "Pvt Ltd Invoice",
-          amount: "$ 300",
-        },
-        {
-          id: "1",
-          description: "Invoice 6 Payment",
-          amount: "$ 250",
-        },
-        {
-          id: "1",
-          description: "Invoice 18 Payment",
-          amount: "$ 400",
-        },
-        {
-          id: "1",
-          description: "John and company Payment",
-          amount: "$ 500",
-        },
+      deposit: [],
+      pagination: {
+        rowsPerPage: 10,
+      },
+      filter: "",
+      mode: "list",
+      pagination: {
+        rowsPerPage: 10,
+      },
+      options: [
+        "National Bank",
+        "Bank of Asia",
+        "Corporate Bank",
+        "Public Bank",
       ],
     };
   },
-  components:{
-    employeesalarylist
+  computed: {
+    userId() {
+      return lockr.get("userId");
+    },
+    currentToken() {
+      return lockr.get("currentToken");
+    },
   },
   methods: {
     exportDepositsTable() {
       // naive encoding to csv format
       const content = [this.columns.map((col) => wrapCsvValue(col.label))]
         .concat(
-          this.data.map((row) =>
+          this.deposit.map((row) =>
             this.columns
               .map((col) =>
                 wrapCsvValue(
@@ -286,14 +418,14 @@ export default {
         this.timer = void 0;
       }, 3000);
     },
-    async SearchDB(verificentroid) {
+    async findCar() {
       let vm = this;
+      //vm.deposit = {}
       var username = "admin";
       var password = "adminpw";
+      //Busqueda por CVV Validador
       let body = {
-        selector: {
-          "verificentroid": verificentroid
-        },
+        selector: { ccvvalid: vm.userId },
       };
       let config = {
         auth: {
@@ -301,9 +433,25 @@ export default {
           password: password,
         },
       };
-      const response = await axios
-        .post("http://localhost:5984/mychannel_fabcar/_find", body, config)
-        vm.data = response.data.docs
+      debugger;
+      const response = await axios.post(
+        "http://localhost:5984/mychannel_fabcar/_find",
+        body,
+        config
+      );
+      console.log("Respuesta de la busqueda por CVV Validador===>", response);
+      if (response.data.docs.length == 0) {
+        this.$q.notify({
+          message: "No se han encontrado registros para " + vm.userId,
+        });
+        vm.deposit = {};
+      } else {
+        //Llenando los valores de la busqueda
+        vm.deposit = response.data.docs;
+        console.log("Objeto deposit ===>", vm.deposit);
+        debugger;
+        vm.$forceUpdate();
+      }
     },
 
     beforeDestroy() {
@@ -315,9 +463,8 @@ export default {
   },
   async beforeMount() {
     let vm = this;
+    await vm.findCar();
     vm.showLoading();
-    let veri = "CVV-1" //Hacer esto dinamico
-    await vm.SearchDB(veri);
   },
 };
 </script>

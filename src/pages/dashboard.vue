@@ -94,7 +94,7 @@
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.anio"
+                        v-model="deposit.niv"
                         label="Año"
                       />
                     </q-item-section>
@@ -367,7 +367,6 @@
 import Vue from "vue";
 import IEcharts from "vue-echarts-v3/src/full.js";
 import axios from "axios";
-import store from "./store";
 import lockr from "lockr";
 Vue.component("IEcharts", IEcharts);
 
@@ -785,8 +784,8 @@ export default {
           vm.deposit.modelo +
           '","placas":"' +
           vm.deposit.placas +
-          '","anio":"' +
-          vm.deposit.anio +
+          '","niv":"' +
+          vm.deposit.niv +
           '","verificentroid":"' +
           vm.deposit.verificentroid +
           '","tecnicoid":"' +
@@ -835,6 +834,8 @@ export default {
           vm.deposit.createdate +
           '","updatedate":"' +
           vm.deposit.updatedate +
+          '","hologramaObtenido":"' +
+          vm.deposit.hologramaObtenido +
           '"}',
       ];
       console.log(vm.deposit);
@@ -873,7 +874,7 @@ export default {
         vm.deposit.marca &&
         vm.deposit.modelo &&
         vm.deposit.placas &&
-        vm.deposit.anio
+        vm.deposit.niv
       ) {
         //Aleatoriedad para los que si tienen multas
         if (Math.round(Math.random() * (10 - 0)) + 0 == 5) {
@@ -885,10 +886,11 @@ export default {
           vm.deposit.id = max;
           vm.deposit.verificentroid = vm.userId; 
           vm.deposit.tecnicoid = "--";
+          vm.deposit.hologramaObtenido = "--"
           vm.deposit.odometroid = "--";
           vm.deposit.validadorid = "--";
           vm.deposit.lineaverifica = "--";
-          vm.deposit.status = "Rechazado por multas";
+          vm.deposit.status = "Rechazado";
           vm.deposit.co = "--";
           vm.deposit.co2 = "--";
           vm.deposit.o2 = "--";

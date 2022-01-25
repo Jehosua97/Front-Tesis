@@ -17,7 +17,7 @@
         <!--            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">-->
         <!--          </q-avatar>-->
 
-        <q-toolbar-title>Centro de Verificación Vehicular #{{userId.substring(4)}}</q-toolbar-title>
+        <q-toolbar-title>Sistema de Verificación Vehicular del Estado de México</q-toolbar-title>
         <q-btn
           class="q-mr-xs"
           flat
@@ -62,7 +62,7 @@
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
 
-            <q-toolbar-title>Mayank Patel</q-toolbar-title>
+            <q-toolbar-title>{{userId}}</q-toolbar-title>
           </q-toolbar>
           <hr />
           <q-scroll-area style="height:100%;">
@@ -97,7 +97,7 @@
                 </q-item-section>
 
                 <q-item-section>
-                  Consulta de Resultados
+                  Busqueda por NIV
                 </q-item-section>
               </q-item>
               
@@ -113,7 +113,7 @@
                 </q-item-section>
 
                 <q-item-section>
-                  Transactions
+                  Transacciones por validar
                 </q-item-section>
               </q-item>
 
@@ -130,7 +130,7 @@
                 </q-item-section>
 
                 <q-item-section>
-                  Transacciones por validar
+                  Consulta Global
                 </q-item-section>
               </q-item>
 

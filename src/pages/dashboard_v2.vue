@@ -65,11 +65,11 @@
                 <q-list>
                   <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Placas</q-item-label>
+                      <q-item-label class="q-pb-xs">NIV</q-item-label>
                       <q-input
                         outlined
-                        v-model="deposit.placas"
-                        label="Placas"
+                        v-model="deposit.niv"
+                        label="NIV"
                       />
                     </q-item-section>
                   </q-item>
@@ -762,10 +762,10 @@ export default {
       //vm.deposit = {}
       var username = "admin";
       var password = "adminpw";
-      if(vm.deposit.placas){
+      if(vm.deposit.niv){
         //Busqueda por Placas
       let body = {
-        selector: { placas: vm.deposit.placas },
+        selector: { niv: vm.deposit.niv },
       };
       let config = {
         auth: {
@@ -779,15 +779,15 @@ export default {
         body,
         config
       );
-      console.log("Respuesta de la busqueda por placas===>", response);
+      console.log("Respuesta de la busqueda por niv===>", response);
       if (response.data.docs.length == 0) {
         this.$q.notify({
-          message: "No se han encontrado registros para " + vm.deposit.placas,
+          message: "No se han encontrado registros para " + vm.deposit.niv,
         });
         vm.deposit = {}
       } else {
         //Llenando los valores de la busqueda
-        vm.deposit.anio = response.data.docs[0].anio;
+        vm.deposit.niv = response.data.docs[0].niv;
         vm.deposit.bayonetaaceite = response.data.docs[0].bayonetaaceite;
         vm.deposit.ccvvalid = response.data.docs[0].ccvvalid;
         vm.deposit.co = response.data.docs[0].co;
@@ -811,6 +811,7 @@ export default {
         vm.deposit.tapagasolina = response.data.docs[0].tapagasolina;
         vm.deposit.taponradiador = response.data.docs[0].taponradiador;
         vm.deposit.tecnicoid = response.data.docs[0].tecnicoid;
+        vm.deposit.hologramaObtenido = response.data.docs[0].hologramaObtenido;
         vm.deposit.tuboescape = response.data.docs[0].tuboescape;
         vm.deposit.updatedate = response.data.docs[0].updatedate;
         vm.deposit.validadorid = response.data.docs[0].validadorid;
@@ -820,7 +821,7 @@ export default {
       }
       }else{
          this.$q.notify({
-          message: "Favor de ingresar placas",
+          message: "Favor de ingresar el niv",
         });
       }
     },

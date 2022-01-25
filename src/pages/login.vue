@@ -71,9 +71,6 @@
           </q-card-section>
         </q-card>
       </q-page>
-      <label class="absolute-bottom-left">
-        <input type="file" @change="loadTextFromFile" />
-      </label>
     </q-page-container>
   </q-layout>
 </template>
