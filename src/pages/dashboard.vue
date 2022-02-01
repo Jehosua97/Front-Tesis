@@ -90,12 +90,12 @@
                   </q-item>
                   <q-item>
                     <q-item-section>
-                      <q-item-label class="q-pb-xs">Año</q-item-label>
+                      <q-item-label class="q-pb-xs">NIV</q-item-label>
                       <q-input
                         dense
                         outlined
                         v-model="deposit.niv"
-                        label="Año"
+                        label="Número de Identificación Vehicular"
                       />
                     </q-item-section>
                   </q-item>
@@ -766,6 +766,7 @@ export default {
       vm.deposit.id = max;
       vm.deposit.createdate = vm.currentDate();
       vm.deposit.updatedate = "--";
+      vm.deposit.hologramaObtenido = "--";
       vm.deposit.ccvvalid = vm.asignarCVVValidador(
         vm.deposit.verificentroid.substring(4, vm.deposit.verificentroid.length)
       );
@@ -966,6 +967,7 @@ export default {
       console.log("CVV Origen: " + currentCVV);
       let vm = this;
       var randomNumber = parseInt(Math.random() * (11 - 1) + 1);
+      debugger
       if (randomNumber == currentCVV) {
         vm.asignarCVVValidador(currentCVV);
       } else {

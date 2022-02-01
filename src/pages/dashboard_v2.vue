@@ -328,62 +328,8 @@
         </div>
       </div>
     </div>
-    <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
-      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <q-card>
-          <q-card-section
-            :class="$q.dark.isActive ? 'orange_dark' : 'bg-orange-9'"
-            class="text-white"
-          >
-            <div class="row">
-              <div class="col-10">
-                <div class="text-h6">% Change</div>
-                <div class="text-h5">
-                  <q-icon name="arrow_downward" />
-                  2%
-                </div>
-              </div>
-              <div class="col-2">
-                <q-icon size="62px" name="compare_arrows" />
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-    <div class="row q-col-gutter-sm q-ma-xs">
-      <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-        <q-card flat bordered class="">
-          <q-card-section class="row">
-            <div class="text-h6 col-12">
-              Sales vs Quota
-              <q-btn
-                flat
-                dense
-                icon="fas fa-download"
-                class="float-right"
-                @click="SaveImage('gauge')"
-                :color="!$q.dark.isActive ? 'grey-8' : 'white'"
-              >
-                <q-tooltip>Download</q-tooltip>
-              </q-btn>
-            </div>
-          </q-card-section>
-
-          <q-separator inset></q-separator>
-
-          <q-card-section>
-            <IEcharts
-              :option="gaugeOptions"
-              ref="gauge"
-              :resizable="true"
-              style="height: 220px"
-            />
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
   </q-page>
+  
 </template>
 
 <script>

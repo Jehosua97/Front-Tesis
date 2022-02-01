@@ -71,12 +71,20 @@
               <template v-slot:body-cell-detalles="propsDet">
                 <q-td :props="propsDet">
                   <q-btn
-                    @click="employee_dialog = true"
+                    @click="showItem(propsDet)"
                     dense
                     round
                     color="secondary"
                     icon="pageview"
                   />
+                </q-td>
+              </template>
+              <template v-slot:body-cell-ccvvalid="props">
+                <q-td :props="props">
+                  {{
+                    (props.row.status != "Por validar" && props.row.ccvvalid) ||
+                    "??"
+                  }}
                 </q-td>
               </template>
               <template v-slot:body-cell-status="props">
@@ -100,51 +108,110 @@
               </template>
             </q-table>
           </q-card>
-          <q-dialog v-model="employee_dialog" >
-            <q-card class="my-card" flat bordered>
-              <q-card-section>
-                <div class="text-h6">
-                  Detalles de la prueba aplicada
-                  <q-btn
-                    round
-                    flat
-                    dense
-                    icon="close"
-                    class="float-right"
-                    color="grey-8"
-                    v-close-popup
-                  ></q-btn>
-                </div>
-              </q-card-section>
-              <q-card-section horizontal>
-                <q-card-section class="q-pt-xs">
-                  <div class="text-overline">US Region</div>
-                  <div class="text-h5 q-mt-sm q-mb-xs">Mayank Patel</div>
-                  <div class="text-caption text-grey">
-                    Sales and Marketing Executive | Graduate and past committee
-                    | Keynote speaker on Selling and Recruiting Topics
-                  </div>
-                </q-card-section>
-
-                <q-card-section class="col-5 flex flex-center">
-                  <q-img
-                    class="rounded-borders"
-                    src="https://cdn.quasar.dev/img/boy-avatar.png"
-                  />
-                </q-card-section>
-              </q-card-section>
-
-              <q-separator />
-              <q-card-section>
-                Assessing clients needs and present suitable promoted products.
-                Liaising with and persuading targeted doctors to prescribe our
-                products utilizing effective sales skills.
-              </q-card-section>
-            </q-card>
-          </q-dialog>
         </q-page>
       </div>
     </div>
+    <q-dialog v-model="employee_dialog">
+      <q-card class="my-card" flat bordered style="width: 4085px">
+        <q-card-section>
+          <div class="text-h5 q-mt-sm q-mb-xs">
+            Detalles de la Prueba
+            <q-btn
+              round
+              flat
+              dense
+              icon="close"
+              class="float-right"
+              color="grey-8"
+              v-close-popup
+            ></q-btn>
+          </div>
+          <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+              <div class="text-h7 q-mt-sm q-mb-xs">
+                Placas: {{ dataSelected.placas }}
+              </div>
+              <div class="text-h7 q-mt-sm q-mb-xs">
+                NIV: {{ dataSelected.niv }}
+              </div>
+              <div class="text-h7 q-mt-sm q-mb-xs">
+                Marca: {{ dataSelected.marca }}
+              </div>
+              <div class="text-h7 q-mt-sm q-mb-xs">
+                Modelo: {{ dataSelected.modelo }}
+              </div>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+              <div class="text-h7 q-mt-sm q-mb-xs">
+                CVV Origen: {{ dataSelected.verificentroid }}
+              </div>
+              <div class="text-h7 q-mt-sm q-mb-xs">
+                Técnico ID: {{ dataSelected.tecnicoid }}
+              </div>
+              <div class="text-h7 q-mt-sm q-mb-xs">
+                Número de linea: {{ dataSelected.lineaverifica }}
+              </div>
+              <div class="text-h7 q-mt-sm q-mb-xs">
+                Odómetro ID: {{ dataSelected.odometroid }}
+              </div>
+            </div>
+            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+              <q-img
+                class="rounded-borders"
+                src="https://cdn.quasar.dev/img/boy-avatar.png"
+              />
+            </div>
+          </div>
+          <q-separator />
+        </q-card-section>
+        <q-tabs
+          v-model="tab"
+          dense
+          class="text-grey"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify"
+          narrow-indicator
+        >
+          <q-tab name="valores" label="Valores Capturados" />
+          <q-tab name="visual" label="Inspección Visual" />
+        </q-tabs>
+        <q-separator />
+        <q-tab-panels v-model="tab" animated>
+          <q-tab-panel name="valores">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-table
+                title="Toma de valores"
+                :data="depositCurrentValues"
+                :hide-header="mode === 'grid'"
+                :columns="columnsCurrentValues"
+                row-key="name"
+                :grid="mode == 'grid'"
+                :filter="filter"
+                :pagination.sync="pagination"
+              >
+              </q-table>
+            </div>
+          </q-tab-panel>
+          <q-tab-panel name="visual">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-table
+                title="Inspección Visual"
+                :data="depositCurrentValuesVisual"
+                :hide-header="mode === 'grid'"
+                :columns="columnsCurrentValuesVisual"
+                row-key="name"
+                :grid="mode == 'grid'"
+                :filter="filter"
+                :pagination.sync="pagination"
+              >
+              </q-table>
+            </div>
+          </q-tab-panel>
+        </q-tab-panels>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -155,21 +222,52 @@ import lockr from "lockr";
 
 function wrapCsvValue(val, formatFn) {
   let formatted = formatFn !== void 0 ? formatFn(val) : val;
-
   formatted =
     formatted === void 0 || formatted === null ? "" : String(formatted);
-
   formatted = formatted.split('"').join('""');
-
   return `"${formatted}"`;
 }
 
 export default {
   data() {
     return {
+      tab: "valores",
+      dataSelected: {},
       invoice: {},
       employee_dialog: false,
-       columns: [
+      columnsCurrentValues: [
+        {
+          name: "parametro",
+          align: "left",
+          label: "Parámetro",
+          field: "parametro",
+          sortable: true,
+        },
+        {
+          name: "valor",
+          align: "left",
+          label: "Valor",
+          field: "valor",
+          sortable: true,
+        },
+      ],
+      columnsCurrentValuesVisual: [
+        {
+          name: "parametro",
+          align: "left",
+          label: "Parámetro",
+          field: "parametro",
+          sortable: true,
+        },
+        {
+          name: "valor",
+          align: "left",
+          label: "Valor",
+          field: "valor",
+          sortable: true,
+        },
+      ],
+      columns: [
         {
           name: "niv",
           align: "left",
@@ -220,14 +318,14 @@ export default {
           field: "hologramaObtenido",
           sortable: true,
         },
-         {
+        {
           name: "verificentroid",
           align: "left",
           label: "CVV Origen",
           field: "verificentroid",
           sortable: true,
         },
-         {
+        {
           name: "ccvvalid",
           align: "left",
           label: "CVV Validador",
@@ -250,6 +348,8 @@ export default {
         },
       ],
       deposit: [],
+      depositCurrentValues: [],
+      depositCurrentValuesVisual: [],
       pagination: {
         rowsPerPage: 10,
       },
@@ -275,11 +375,78 @@ export default {
     },
   },
   methods: {
+    showItem(item) {
+      console.log("Soy el item actual==>", item.row);
+      this.depositCurrentValues = [
+        {
+          parametro: "Oxígeno (O2)",
+          valor: item.row.o2,
+        },
+        {
+          parametro: "Monóxido de Carbono (CO)",
+          valor: item.row.co,
+        },
+        {
+          parametro: "Dióxido de Carbono (CO2)",
+          valor: item.row.co2,
+        },
+        {
+          parametro: "Factor Lambda",
+          valor: item.row.lambda,
+        },
+        {
+          parametro: "Hidrocarburos",
+          valor: item.row.hidrocarburo,
+        },
+        {
+          parametro: "Óxidos de Nitrógeno (NOx ppm)",
+          valor: item.row.noxppm,
+        },
+      ];
+      this.depositCurrentValuesVisual = [
+        {
+          parametro: "Filtro de Aire",
+          valor: item.row.filtroaire,
+        },
+        {
+          parametro: "Luces",
+          valor: item.row.lucestyd,
+        },
+        {
+          parametro: "Manguera de Vacío",
+          valor: item.row.mangueravacio,
+        },
+        {
+          parametro: "Llantas",
+          valor: item.row.ruedas,
+        },
+        {
+          parametro: "Tapa de Gasolina",
+          valor: item.row.tapagasolina,
+        },
+        {
+          parametro: "Tapón del Radiador",
+          valor: item.row.taponradiador,
+        },
+        {
+          parametro: "Tubo de escape",
+          valor: item.row.tuboescape,
+        },
+      ];
+      this.employee_dialog = true;
+      this.dataSelected = item.row;
+    },
     exportDepositsTable() {
       // naive encoding to csv format
+      let exportArray = this.deposit;
+      for (let i = 0; i < exportArray.length; i++) {
+        if (exportArray[i].status == "Por validar") {
+          exportArray[i].ccvvalid = "??";
+        }
+      }
       const content = [this.columns.map((col) => wrapCsvValue(col.label))]
         .concat(
-          this.deposit.map((row) =>
+          exportArray.map((row) =>
             this.columns
               .map((col) =>
                 wrapCsvValue(
@@ -322,7 +489,7 @@ export default {
       var password = "adminpw";
       //Busqueda por CVV Validador
       let body = {
-        selector: { },
+        selector: {},
       };
       let config = {
         auth: {
@@ -344,9 +511,9 @@ export default {
         vm.deposit = {};
       } else {
         //Llenando los valores de la busqueda
-        for(let i = 1; i < response.data.docs.length; i++){
-          if(response.data.docs[i].status != "Por validar"){
-            vm.deposit.push(response.data.docs[i])
+        for (let i = 1; i < response.data.docs.length; i++) {
+          if (response.data.docs[i].status == "Por validar") {
+            vm.deposit.push(response.data.docs[i]);
           }
         }
         //vm.deposit = response.data.docs;
@@ -371,4 +538,5 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>
