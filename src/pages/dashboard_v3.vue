@@ -162,6 +162,23 @@
                 src="https://cdn.quasar.dev/img/boy-avatar.png"
               />
             </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <q-chip
+                :color="
+                  this.dataSelected.status == 'Por validar'
+                    ? 'orange'
+                    : this.dataSelected.status == 'Rechazado'
+                    ? 'red'
+                    : 'green'
+                "
+                text-color="white"
+                dense
+                class="text-weight-bolder"
+                square
+                style="width: 85px"
+                >{{ this.dataSelected.status }}
+              </q-chip>
+            </div>
           </div>
           <q-separator />
         </q-card-section>
@@ -510,9 +527,18 @@ export default {
         });
         vm.deposit = {};
       } else {
-        //Llenando los valores de la busqueda
+        //Llenando los valores de la busqueda Por validar
         for (let i = 1; i < response.data.docs.length; i++) {
           if (response.data.docs[i].status == "Por validar") {
+            vm.deposit.push(response.data.docs[i]);
+          }
+        }
+        //Llenando los valores de la busqueda Validado
+        for (let i = 1; i < response.data.docs.length; i++) {
+          if (
+            response.data.docs[i].status == "Validado" ||
+            response.data.docs[i].status == "Rechazado"
+          ) {
             vm.deposit.push(response.data.docs[i]);
           }
         }

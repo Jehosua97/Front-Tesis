@@ -972,7 +972,12 @@ export default {
         vm.asignarCVVValidador(currentCVV);
       } else {
         var Org = "CVV_" + randomNumber;
-        return Org;
+        if(Org == undefined){
+          debugger
+          vm.asignarCVVValidador(currentCVV);
+        }else{
+          return Org;
+        }
       }
     },
     //Busqueda en todo el ledger

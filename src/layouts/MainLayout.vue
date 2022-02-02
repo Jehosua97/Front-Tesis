@@ -113,7 +113,7 @@
                 </q-item-section>
 
                 <q-item-section>
-                  Transacciones por validar
+                  Transacciones Asignadas
                 </q-item-section>
               </q-item>
 

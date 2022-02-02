@@ -127,7 +127,7 @@
         <q-page class="q-pa-sm">
           <q-card>
             <q-table
-              title="Transacciones por Validar"
+              title="Transacciones Asignadas"
               :data="deposit"
               :hide-header="mode === 'grid'"
               :columns="columns"
@@ -275,13 +275,31 @@
                 src="https://cdn.quasar.dev/img/boy-avatar.png"
               />
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" v-if="this.itemActual.status == 'Por validar'">
               <q-btn
                 v-on:click="asignarHologramaShow = true"
                 color="primary"
                 icon-right="send"
                 label="Asignar Holograma"
+                :disable="this.itemActual.status == 'Validado'"
               />
+            </div>
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" v-if="this.itemActual.status == 'Validado' || this.itemActual.status == 'Rechazado'">
+              <q-chip
+                :color="
+                  this.itemActual.status == 'Por validar'
+                    ? 'orange'
+                    : this.itemActual.status == 'Rechazado'
+                    ? 'red'
+                    : 'green'
+                "
+                text-color="white"
+                dense
+                class="text-weight-bolder"
+                square
+                style="width: 85px"
+                >{{ this.itemActual.status }}
+              </q-chip>
             </div>
           </div>
         </q-card-section>
@@ -351,51 +369,48 @@
           <div class="q-gutter-sm">
             <q-radio
               keep-color
-              v-model="color"
-              val="teal"
+              v-model="hologramaSelected"
+              val="Cero"
               label="Cero"
               color="teal"
             />
             <q-radio
               keep-color
-              v-model="color"
-              val="orange"
+              v-model="hologramaSelected"
+              val="Uno"
               label="Uno"
               color="orange"
             />
             <q-radio
               keep-color
-              v-model="color"
-              val="red"
+              v-model="hologramaSelected"
+              val="Dos"
               label="Dos"
               color="red"
             />
             <q-radio
               keep-color
-              v-model="color"
-              val="cyan"
+              v-model="hologramaSelected"
+              val="Sin Holograma"
               label="Sin Holograma"
               color="cyan"
             />
           </div>
           <div class="q-pa-md" style="max-width: 500px">
             <q-input
-              v-model="text"
+              v-model="coment"
               filled
               type="textarea"
               placeholder="Comentario (Opcional)"
             />
           </div>
-          
-          <template v-slot:body-cell-detalles="propsDet">
-            <div class="q-pa-md q-gutter-sm" :props="propsDet">
+            <div class="q-pa-md q-gutter-sm">
               <q-btn
                 color="primary"
                 label="Guardar y Descargar Comprobante"
-                @click="asignaHolograma(propsDet)"
+                @click="asignaHolograma()"
               />
             </div>
-          </template>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -421,7 +436,9 @@ function wrapCsvValue(val, formatFn) {
 export default {
   data() {
     return {
-      color: "cyan",
+      coment:"",
+      hologramaSelected:"",
+      itemActual:{},
       asignarHologramaShow: false,
       tab: "valores",
       dataSelected: {},
@@ -556,14 +573,17 @@ export default {
     },
   },
   methods: {
-    asignaHolograma(item) {
+    async asignaHolograma() {
       let vm = this;
       vm.asignarHologramaShow = false;
       vm.employee_dialog = false;
-      console.log("Soy el item del holograma===", item);
+      console.log("Soy el item del holograma===", vm.itemActual);
+      await vm.insertLedger(vm.currentToken);
+      await vm.findCar();
     },
     showItem(item) {
       console.log("Soy el item actual==>", item.row);
+      this.itemActual = item.row;
       this.depositCurrentValues = [
         {
           parametro: "Oxígeno (O2)",
@@ -693,7 +713,7 @@ export default {
         vm.totalAsignadas = 0;
         vm.porRevisar = 0;
         vm.revisadas = 0;
-      } else {
+      } else {  
         //Llenando los valores de la busqueda
         vm.deposit = response.data.docs;
         console.log("Objeto deposit ===>", vm.deposit);
@@ -708,7 +728,142 @@ export default {
         vm.$forceUpdate();
       }
     },
-
+    currentDate() {
+      let date = new Date();
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      let hour = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
+      if (month < 10) {
+        var data =
+          day +
+          "-0" +
+          month +
+          "-" +
+          year +
+          " " +
+          hour +
+          ":" +
+          minutes +
+          ":" +
+          seconds;
+        return data;
+      } else {
+        var data =
+          day +
+          "-" +
+          month +
+          "-" +
+          year +
+          " " +
+          hour +
+          ":" +
+          minutes +
+          ":" +
+          seconds;
+        return data;
+      }
+    },
+    async insertLedger(token) {
+      let vm = this;
+      console.log("Soy el holograma seleccionado==== ",vm.hologramaSelected);
+      let miStatus = ""
+      if(vm.hologramaSelected == "Sin Holograma"){
+        miStatus = "Rechazado"
+      }else{
+        miStatus = "Validado"
+      }
+      let updateDate = await vm.currentDate();
+      let arg = [
+        '{"id":"' +
+          vm.itemActual.id +
+          '","marca":"' +
+          vm.itemActual.marca +
+          '","modelo":"' +
+          vm.itemActual.modelo +
+          '","placas":"' +
+          vm.itemActual.placas +
+          '","niv":"' +
+          vm.itemActual.niv +
+          '","verificentroid":"' +
+          vm.itemActual.verificentroid +
+          '","tecnicoid":"' +
+          vm.itemActual.tecnicoid +
+          '","odometroid":"' +
+          vm.itemActual.odometroid +
+          '","validadorid":"' +
+          vm.itemActual.validadorid +
+          '","lineaverifica":"' +
+          vm.itemActual.lineaverifica +
+          '","status":"' +
+          miStatus +
+          '","co":"' +
+          vm.itemActual.co +
+          '","co2":"' +
+          vm.itemActual.co2 +
+          '","o2":"' +
+          vm.itemActual.o2 +
+          '","noxppm":"' +
+          vm.itemActual.noxppm +
+          '","hidrocarburo":"' +
+          vm.itemActual.hidrocarburo +
+          '","lambda":"' +
+          vm.itemActual.lambda +
+          '","ccvvalid":"' +
+          vm.itemActual.ccvvalid +
+          '","validadorid":"' +
+          vm.itemActual.validadorid +
+          '","tapagasolina":"' +
+          vm.itemActual.tapagasolina +
+          '","bayonetaaceite":"' +
+          vm.itemActual.bayonetaaceite +
+          '","filtroaire":"' +
+          vm.itemActual.filtroaire +
+          '","tuboescape":"' +
+          vm.itemActual.tuboescape +
+          '","taponradiador":"' +
+          vm.itemActual.taponradiador +
+          '","mangueravacio":"' +
+          vm.itemActual.mangueravacio +
+          '","ruedas":"' +
+          vm.itemActual.ruedas +
+          '","lucestyd":"' +
+          vm.itemActual.lucestyd +
+          '","createdate":"' +
+          vm.itemActual.createdate +
+          '","updatedate":"' +
+          updateDate +
+          '","hologramaObtenido":"' +
+          vm.hologramaSelected +
+          '"}',
+      ];
+      console.log(arg);
+      let body = {
+        fcn: "CreateCar",
+        chaincodeName: "fabcar",
+        channelName: "mychannel",
+        args: arg,
+      };
+      let config = {
+        headers: { Authorization: `Bearer ${token}` },
+      };
+      console.log("Deposit " + vm.itemActual);
+      debugger
+      await axios
+        .post(
+          "http://localhost:4000/channels/mychannel/chaincodes/fabcar",
+          body,
+          config
+        )
+      vm.itemActual = {};
+      console.log("Auto actualizado en Ledger");
+      this.$q.notify({
+            message: "Datos ingresados con éxito",
+          });
+      vm.$forceUpdate();
+    },
     beforeDestroy() {
       if (this.timer !== void 0) {
         clearTimeout(this.timer);
