@@ -352,7 +352,7 @@
     </q-dialog>
 
     <q-dialog v-model="asignarHologramaShow">
-      <q-card class="my-card" flat bordered style="width: 500px">
+      <q-card class="my-card" flat bordered style="width: 550px">
         <q-card-section>
           <div class="text-h5 q-mt-sm q-mb-xs">
             Asignación de Holograma
@@ -370,9 +370,16 @@
             <q-radio
               keep-color
               v-model="hologramaSelected"
+              val="Doble Cero"
+              label="Doble Cero"
+              color="teal"
+            />
+            <q-radio
+              keep-color
+              v-model="hologramaSelected"
               val="Cero"
               label="Cero"
-              color="teal"
+              color="yellow"
             />
             <q-radio
               keep-color
@@ -393,7 +400,7 @@
               v-model="hologramaSelected"
               val="Sin Holograma"
               label="Sin Holograma"
-              color="cyan"
+              color="dark"
             />
           </div>
           <div class="q-pa-md" style="max-width: 500px">
@@ -573,9 +580,13 @@ export default {
     },
   },
   methods: {
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    },
     async asignaHolograma() {
       let vm = this;
       vm.asignarHologramaShow = false;
+      await vm.sleep(2000);
       vm.employee_dialog = false;
       console.log("Soy el item del holograma===", vm.itemActual);
       await vm.insertLedger(vm.currentToken);
@@ -674,7 +685,7 @@ export default {
     },
     showLoading() {
       this.$q.loading.show({
-        message: "<b>Demo loading screen, replace your message here<b>",
+        message: "<b>Cargando los datos, por favor espere...<b>",
       });
 
       // hiding in 2s

@@ -25,15 +25,6 @@
           @click="$q.dark.toggle()"
           :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
         />
-        <a
-          style="font-size: 25px;"
-          class="float-right q-mr-sm"
-          href="https://github.com/sponsors/mayank091193"
-          target="_blank"
-          title="Donate"
-          ><i class="fas fa-heart" style="color: #eb5daa"></i
-        ></a>
-        <q-btn flat round dense icon="search" class="q-mr-xs" />
         <q-btn
           flat
           round

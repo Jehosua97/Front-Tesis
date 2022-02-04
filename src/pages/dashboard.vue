@@ -1,8 +1,7 @@
 <template>
   <q-page>
     <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
-      <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-      </div>
+      <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12"></div>
     </div>
     <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
       <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -13,7 +12,7 @@
           >
             <div class="row">
               <div class="col-10">
-                <div class="text-h6">Nueva entrada de auto</div>
+                <div class="text-h5">Nueva entrada de auto</div>
               </div>
               <div class="col-2">
                 <q-icon size="62px" name="trending_up" />
@@ -30,8 +29,7 @@
           >
             <div class="row">
               <div class="col-10">
-                <div class="text-h6">Datos de la verificación</div>
-                <div class="text-h5">Status: Por validar</div>
+                <div class="text-h5">Datos de la verificación</div>
               </div>
               <div class="col-2">
                 <q-icon size="62px" name="far fa-dot-circle" />
@@ -51,7 +49,6 @@
                 <q-btn
                   flat
                   dense
-                  icon="fas fa-download"
                   class="float-right"
                   :color="!$q.dark.isActive ? 'grey-8' : 'white'"
                 >
@@ -59,11 +56,8 @@
                 </q-btn>
               </div>
             </q-card-section>
-
             <q-separator inset></q-separator>
-
             <q-card-section>
-              <q-separator inset></q-separator>
               <q-form>
                 <q-list>
                   <q-item>
@@ -74,6 +68,7 @@
                         outlined
                         v-model="deposit.marca"
                         label="Marca"
+                        :disable="insertAllData"
                       />
                     </q-item-section>
                   </q-item>
@@ -85,6 +80,7 @@
                         outlined
                         v-model="deposit.modelo"
                         label="Modelo"
+                        :disable="insertAllData"
                       />
                     </q-item-section>
                   </q-item>
@@ -96,6 +92,7 @@
                         outlined
                         v-model="deposit.niv"
                         label="Número de Identificación Vehicular"
+                        :disable="insertAllData"
                       />
                     </q-item-section>
                   </q-item>
@@ -107,6 +104,7 @@
                         outlined
                         v-model="deposit.placas"
                         label="Placas"
+                        :disable="insertAllData"
                       />
                     </q-item-section>
                   </q-item>
@@ -118,6 +116,7 @@
                     label="Verificar Multas"
                     no-caps
                     @click="validarAutoMulta"
+                    :disable="insertAllData"
                   />
                 </center>
               </q-form>
@@ -125,7 +124,6 @@
           </q-card>
           <br />
         </div>
-
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12" v-if="insertAllData">
           <q-card flat bordered class="">
             <q-card-section class="row">
@@ -134,7 +132,6 @@
                 <q-btn
                   flat
                   dense
-                  icon="fas fa-download"
                   class="float-right"
                   @click="SaveImage('line')"
                   :color="!$q.dark.isActive ? 'grey-8' : 'white'"
@@ -143,11 +140,23 @@
                 </q-btn>
               </div>
             </q-card-section>
-
             <q-separator inset></q-separator>
             <q-card-section>
-              <q-form>
+              <q-form v-show="showAsignations">
+                <q-separator inset></q-separator>
                 <q-list>
+                  <q-item>
+                    <q-item-section avatar>
+                      <q-avatar>
+                        <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+                      </q-avatar>
+                    </q-item-section>
+                    <q-item-section
+                      >Centro de Verificación Vehicular No.
+                      {{ userId.substring(4, userId.length) }}</q-item-section
+                    >
+                  </q-item>
+                  <br />
                   <q-item>
                     <q-item-section>
                       <q-item-label class="q-pb-xs"
@@ -156,6 +165,7 @@
                       <q-input
                         dense
                         outlined
+                        disable
                         v-model="deposit.tecnicoid"
                         label="Nombre y ID"
                       />
@@ -167,6 +177,7 @@
                       <q-input
                         dense
                         outlined
+                        disable
                         v-model="deposit.odometroid"
                         label="ID"
                       />
@@ -175,191 +186,107 @@
                   <q-item>
                     <q-item-section>
                       <q-item-label class="q-pb-xs"
-                        >Monóxido de Carbono</q-item-label
+                        >Línea Verificadora</q-item-label
                       >
                       <q-input
                         dense
                         outlined
-                        v-model="deposit.co"
-                        label="CO Registrado"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs"
-                        >Dióxido de Carbono</q-item-label
-                      >
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.co2"
-                        label="CO2 Registrado"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Oxígeno</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.o2"
-                        label="O2 Registrado"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs"
-                        >Oxígeno de Nitrógeno</q-item-label
-                      >
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.noxppm"
-                        label="NOX ppm"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Hidrocarburos</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.hidrocarburo"
-                        label="HC x pmm"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Lambda</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.lambda"
-                        label="Lambda"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Tapa Gasolina</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.tapagasolina"
-                        label="Tapa Gasolina"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs"
-                        >Bayoneta de Aceite</q-item-label
-                      >
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.bayonetaaceite"
-                        label="Bayoneta de Aceite"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs"
-                        >Filtro de Aire</q-item-label
-                      >
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.filtroaire"
-                        label="Filtro de Aire"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs"
-                        >Tubo de Escape</q-item-label
-                      >
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.tuboescape"
-                        label="Tubo de Escape"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs">Llantas</q-item-label>
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.ruedas"
-                        label="Llantas"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs"
-                        >Tapon de Radiador</q-item-label
-                      >
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.taponradiador"
-                        label="Tapon de Radiador"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs"
-                        >Manguera de Vacio</q-item-label
-                      >
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.mangueravacio"
-                        label="Manguera de Vacio"
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item>
-                    <q-item-section>
-                      <q-item-label class="q-pb-xs"
-                        >Luces Traceras y Delanteras</q-item-label
-                      >
-                      <q-input
-                        dense
-                        outlined
-                        v-model="deposit.lucestyd"
-                        label="Luces Traceras y Delanteras"
+                        disable
+                        v-model="deposit.lineaverifica"
+                        label="Línea Verificadora"
                       />
                     </q-item-section>
                   </q-item>
                 </q-list>
                 <center>
                   <q-btn
-                    color="primary"
-                    icon-right="archive"
-                    label="Registrar Auto"
+                    color="white"
+                    text-color="primary"
+                    icon-right="send"
+                    label="Iniciar Verificación"
                     no-caps
+                    :disable="iniciarVerificacionbutton"
                     @click="addCar"
                   />
                 </center>
               </q-form>
             </q-card-section>
+            <q-inner-loading :showing="loadingvisible">
+              <q-spinner-gears size="50px" color="primary" />
+            </q-inner-loading>
           </q-card>
         </div>
       </div>
     </div>
+    <q-dialog v-model="takingValues" persistent>
+      <q-card class="my-card" flat bordered style="width: 4085px">
+        <q-card-section>
+          <q-tabs
+            v-model="tab"
+            dense
+            class="text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
+            narrow-indicator
+          >
+            <q-tab name="valores" label="Valores Capturados" />
+            <q-tab name="visual" label="Inspección Visual" />
+          </q-tabs>
+          <q-separator />
+          <q-tab-panels v-model="tab" animated>
+            <q-tab-panel name="valores">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-table
+                  title="Toma de valores"
+                  :data="depositCurrentValues"
+                  :hide-header="mode === 'grid'"
+                  :columns="columnsCurrentValues"
+                  row-key="name"
+                  :grid="mode == 'grid'"
+                  :filter="filter"
+                  :pagination.sync="pagination"
+                >
+                </q-table>
+              </div>
+            </q-tab-panel>
+            <q-tab-panel name="visual">
+              <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-table
+                  title="Inspección Visual"
+                  :data="depositCurrentValuesVisual"
+                  :hide-header="mode === 'grid'"
+                  :columns="columnsCurrentValuesVisual"
+                  row-key="name"
+                  :grid="mode == 'grid'"
+                  :filter="filter"
+                  :pagination.sync="pagination"
+                >
+                </q-table>
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+        </q-card-section>
+        <q-separator />
+        <q-card-section>
+          <div v-if="showButtonVoucher">
+            <center>
+              <q-btn
+                color="green"
+                icon-right="archive"
+                label="Descargar Comprobante"
+                no-caps
+                @click="downloadVoucher"
+              />
+            </center>
+          </div>
+          <div v-if="!showButtonVoucher">
+            <q-linear-progress size="25px" :value="progress1" color="primary">
+            </q-linear-progress>
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -384,6 +311,124 @@ function wrapCsvValue(val, formatFn) {
 export default {
   data() {
     return {
+      progress1: 0,
+      showButtonVoucher: false,
+      takingValues: false,
+      showAsignations: false,
+      loadingvisible: false,
+      showSimulatedReturnData: false,
+      multasFlag: false,
+      tab: "valores",
+      pagination: {
+        rowsPerPage: 10,
+      },
+      filter: "",
+      depositCurrentValues: [
+        {
+          parametro: "Oxígeno (O2)",
+          valor: "",
+        },
+        {
+          parametro: "Monóxido de Carbono (CO)",
+          valor: "",
+        },
+        {
+          parametro: "Dióxido de Carbono (CO2)",
+          valor: "",
+        },
+        {
+          parametro: "Factor Lambda",
+          valor: "",
+        },
+        {
+          parametro: "Hidrocarburos",
+          valor: "",
+        },
+        {
+          parametro: "Óxidos de Nitrógeno (NOx ppm)",
+          valor: "",
+        },
+      ],
+      depositCurrentValuesVisual: [
+        {
+          parametro: "Filtro de Aire",
+          valor: "",
+        },
+        {
+          parametro: "Luces",
+          valor: "",
+        },
+        {
+          parametro: "Manguera de Vacío",
+          valor: "",
+        },
+        {
+          parametro: "Llantas",
+          valor: "",
+        },
+        {
+          parametro: "Tapa de Gasolina",
+          valor: "",
+        },
+        {
+          parametro: "Tapón del Radiador",
+          valor: "",
+        },
+        {
+          parametro: "Tubo de escape",
+          valor: "",
+        },
+      ],
+      columnsCurrentValues: [
+        {
+          name: "parametro",
+          align: "left",
+          label: "Parámetro",
+          field: "parametro",
+          sortable: true,
+        },
+        {
+          name: "valor",
+          align: "left",
+          label: "Valor",
+          field: "valor",
+          sortable: true,
+        },
+      ],
+      columnsCurrentValuesVisual: [
+        {
+          name: "parametro",
+          align: "left",
+          label: "Parámetro",
+          field: "parametro",
+          sortable: true,
+        },
+        {
+          name: "valor",
+          align: "left",
+          label: "Valor",
+          field: "valor",
+          sortable: true,
+        },
+      ],
+      iniciarVerificacionbutton: false,
+      arrayTecnicoName: [
+        "Juan Aguilar j832812",
+        "Cristian Cerda c89282",
+        "Balbina Lopez b38227",
+        "Iman Villa i7872392",
+        "Carlos Ferrero j892389",
+        "Julian Bartolome b47893h",
+        "Ana Isabel Singh a849323",
+        "Covadonga Cuadrado h782382",
+        "Arantxa Paz a0490232",
+        "Luciano Ramiro l898371",
+        "Maria Canto m4727832",
+        "Isabel Llorente f893798",
+        "Pedro Antonio p381123",
+        "Michael Guijarro m389742",
+        "Hilario Lujan h382384",
+      ],
       arrayId: [],
       maxId: -1,
       autoId: 0,
@@ -505,11 +550,11 @@ export default {
     };
   },
   computed: {
-    userId(){
-      return lockr.get("userId")
+    userId() {
+      return lockr.get("userId");
     },
-    currentToken(){
-      return lockr.get("currentToken")
+    currentToken() {
+      return lockr.get("currentToken");
     },
     barOptions() {
       return {
@@ -743,6 +788,24 @@ export default {
     },
   },
   methods: {
+    downloadVoucher() {
+      let vm = this;
+      vm.insertAllData = false;
+      vm.iniciarVerificacionbutton = false;
+      vm.multasFlag = false;
+      vm.deposit = {};
+      vm.takingValues = false;
+    },
+    showTextLoading() {
+      let vm = this;
+      vm.loadingvisible = true;
+      vm.showSimulatedReturnData = false;
+
+      setTimeout(() => {
+        vm.loadingvisible = false;
+        vm.showSimulatedReturnData = true;
+      }, 1000);
+    },
     SaveImage(type) {
       const linkSource = this.$refs[type].getDataURL();
       const downloadLink = document.createElement("a");
@@ -754,14 +817,16 @@ export default {
     },
     async addCar() {
       let vm = this;
+      vm.takingValues = true;
+      vm.iniciarVerificacionbutton = true;
       //Obteniendo el id mayor
       await vm.ConectDB();
       let max = parseInt(vm.maxId) + 1;
       console.log("Valor max actual de la PK en BD==>", max);
-      debugger
+      debugger;
       let token = vm.currentToken;
-      vm.deposit.verificentroid = vm.userId
-      vm.deposit.validadorid = "V"+Math.round(Math.random()*10)
+      vm.deposit.verificentroid = vm.userId;
+      vm.deposit.validadorid = "V" + Math.round(Math.random() * 10);
       vm.deposit.status = "Por validar";
       vm.deposit.id = max;
       vm.deposit.createdate = vm.currentDate();
@@ -770,12 +835,138 @@ export default {
       vm.deposit.ccvvalid = vm.asignarCVVValidador(
         vm.deposit.verificentroid.substring(4, vm.deposit.verificentroid.length)
       );
-      vm.deposit.lineaverifica = parseInt(Math.random() * (4 - 1) + 1);
       console.log("Agregando el registro al ledger" + vm.deposit.id);
       vm.insertLedger(token);
     },
+    si_no() {
+      let num = Math.round(Math.random() * 10);
+      if (num > 7) {
+        return "No";
+      } else {
+        return "Si";
+      }
+    },
     async insertLedger(token) {
       let vm = this;
+      if (vm.multasFlag == false) {
+        //Generando los datos aleatorios del Odometro e inspección visual
+        vm.deposit.co =
+          (Math.random() * (3 + 1 - 0.1) + 0.1).toFixed(2) + "% vol"; //Entre 0.1 y 3.0
+        vm.deposit.co2 =
+          (Math.random() * (17 + 1 - 13) + 13).toFixed(2) + "% vol"; //Entre 13.0 y 17.0
+        vm.deposit.o2 =
+          (Math.random() * (2 + 1 - 0.1) + 0.1).toFixed(2) + "% vol"; //Entre 0.1 y 2.0
+        vm.deposit.noxppm =
+          Math.round(Math.random() * (2200 + 1 - 250) + 250) + " (ppm)"; //Entre 250 y 2200
+        vm.deposit.hidrocarburo =
+          Math.round(Math.random() * (400 + 1 - 50) + 50) + " (ppm)"; //Entre 50 y 400
+        vm.deposit.lambda = (Math.random() * (1.1 + 1 - 1) + 1).toFixed(2); //Entre 1.0 y 1.1
+        vm.deposit.tapagasolina = await vm.si_no();
+        vm.deposit.bayonetaaceite = await vm.si_no();
+        vm.deposit.filtroaire = await vm.si_no();
+        vm.deposit.tuboescape = await vm.si_no();
+        vm.deposit.taponradiador = await vm.si_no();
+        vm.deposit.mangueravacio = await vm.si_no();
+        vm.deposit.ruedas = await vm.si_no();
+        vm.deposit.lucestyd = await vm.si_no();
+        //Simulando la carga de datos en tiempo real
+        vm.depositCurrentValues[0].valor = vm.deposit.o2;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValues[1].valor = vm.deposit.co;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValues[2].valor = vm.deposit.co2;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValues[3].valor = vm.deposit.lambda;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValues[4].valor = vm.deposit.hidrocarburo;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValues[5].valor = vm.deposit.noxppm;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        debugger;
+        vm.tab = "visual";
+        vm.depositCurrentValuesVisual[0].valor = vm.deposit.filtroaire;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValuesVisual[1].valor = vm.deposit.lucestyd;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValuesVisual[2].valor = vm.deposit.mangueravacio;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValuesVisual[3].valor = vm.deposit.ruedas;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValuesVisual[4].valor = vm.deposit.tapagasolina;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValuesVisual[5].valor = vm.deposit.taponradiador;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(1000);
+        vm.depositCurrentValuesVisual[6].valor = vm.deposit.tuboescape;
+        vm.progress1 = vm.progress1 + 0.088;
+      } else {
+        vm.takingValues = true;
+        //Simulando la carga de datos en tiempo real
+        vm.depositCurrentValues[0].valor = vm.deposit.o2;
+        vm.progress1 = vm.progress1 + 0.076;
+
+        await vm.sleep(500);
+        vm.depositCurrentValues[1].valor = vm.deposit.co;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValues[2].valor = vm.deposit.co2;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValues[3].valor = vm.deposit.lambda;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValues[4].valor = vm.deposit.hidrocarburo;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValues[5].valor = vm.deposit.noxppm;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        debugger;
+        vm.tab = "visual";
+        vm.depositCurrentValuesVisual[0].valor = vm.deposit.filtroaire;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValuesVisual[1].valor = vm.deposit.lucestyd;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValuesVisual[2].valor = vm.deposit.mangueravacio;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValuesVisual[3].valor = vm.deposit.ruedas;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValuesVisual[4].valor = vm.deposit.tapagasolina;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValuesVisual[5].valor = vm.deposit.taponradiador;
+        vm.progress1 = vm.progress1 + 0.076;
+        await vm.sleep(500);
+        vm.depositCurrentValuesVisual[6].valor = vm.deposit.tuboescape;
+        vm.progress1 = vm.progress1 + 0.088;
+      }
       let arg = [
         '{"id":"' +
           vm.deposit.id +
@@ -850,22 +1041,48 @@ export default {
         headers: { Authorization: `Bearer ${token}` },
       };
       console.log("Deposit " + vm.deposit);
-      debugger
-      await axios
-        .post(
-          "http://localhost:4000/channels/mychannel/chaincodes/fabcar",
-          body,
-          config
-        )
-      vm.deposit = {};
+      debugger;
+      await axios.post(
+        "http://localhost:4000/channels/mychannel/chaincodes/fabcar",
+        body,
+        config
+      );
       console.log("Auto agregado al Ledger");
       this.$q.notify({
-            message: "Datos ingresados con éxito, favor de esperar autenticación",
-          });
-      vm.insertAllData = false;
+        message: "Datos registrados con éxito, favor de esperar autenticación",
+      });
+      vm.showButtonVoucher = true;
+    },
+    showLoading(tipo) {
+      if (tipo == "multas") {
+        this.$q.loading.show({
+          message: "<b>Consultando el sistema de multas...<b>",
+        });
+        // hiding in 2s
+        this.timer = setTimeout(() => {
+          this.$q.loading.hide();
+          this.timer = void 0;
+        }, 3000);
+      }
+      if (tipo == "asignar") {
+        this.$q.loading.show({
+          message: "<b>Asignando Técnico y Linea de Verificación...<b>",
+        });
+        // hiding in 2s
+        this.timer = setTimeout(() => {
+          this.$q.loading.hide();
+          this.timer = void 0;
+        }, 6000);
+      }
+    },
+    sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     },
     async validarAutoMulta() {
       let vm = this;
+      vm.showButtonVoucher = false;
+      await vm.showLoading("multas");
+      await vm.sleep(2001);
       //Obteniendo el id mayor de todos los registros
       await vm.ConectDB();
       let max = parseInt(vm.maxId) + 1;
@@ -885,9 +1102,9 @@ export default {
           });
           let token = vm.currentToken;
           vm.deposit.id = max;
-          vm.deposit.verificentroid = vm.userId; 
+          vm.deposit.verificentroid = vm.userId;
           vm.deposit.tecnicoid = "--";
-          vm.deposit.hologramaObtenido = "--"
+          vm.deposit.hologramaObtenido = "--";
           vm.deposit.odometroid = "--";
           vm.deposit.validadorid = "--";
           vm.deposit.lineaverifica = "--";
@@ -910,14 +1127,25 @@ export default {
           vm.deposit.lucestyd = "--";
           vm.deposit.createdate = vm.currentDate();
           vm.deposit.updatedate = "--";
-          debugger
+          debugger;
+          vm.multasFlag = true;
           vm.insertLedger(token);
         } else {
+          vm.iniciarVerificacionbutton = 1;
           console.log("El auto No tiene multas, adelante");
           vm.insertAllData = true;
           this.$q.notify({
             message: "Sin multas, adelante ",
           });
+          vm.showAsignations = true;
+          //Asignando al tecnico odometro y linea
+          vm.deposit.tecnicoid =
+            vm.arrayTecnicoName[Math.round(Math.random() * 10)]; //Entre 0 y 10
+          vm.deposit.odometroid = Math.round(Math.random() * 100); //Entre 0 y 100
+          vm.deposit.lineaverifica = parseInt(Math.random() * (4 - 1) + 1);
+          await vm.showLoading("asignar");
+          //await vm.sleep(7000);
+          //vm.showTextLoading();
         }
       } else {
         this.$q.notify({
@@ -967,15 +1195,15 @@ export default {
       console.log("CVV Origen: " + currentCVV);
       let vm = this;
       var randomNumber = parseInt(Math.random() * (11 - 1) + 1);
-      debugger
+      debugger;
       if (randomNumber == currentCVV) {
         vm.asignarCVVValidador(currentCVV);
       } else {
         var Org = "CVV_" + randomNumber;
-        if(Org == undefined){
-          debugger
+        if (Org == undefined) {
+          debugger;
           vm.asignarCVVValidador(currentCVV);
-        }else{
+        } else {
           return Org;
         }
       }
@@ -1023,5 +1251,9 @@ export default {
 
 .orange_dark {
   background-color: #64350e;
+}
+
+button {
+  margin: 13px;
 }
 </style>

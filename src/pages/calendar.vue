@@ -5,18 +5,6 @@
       <q-btn flat dense round icon="keyboard_arrow_left" class="q-mr-sm bg-blue text-white" @click="onPrev()"></q-btn>
       <q-btn flat dense round icon="keyboard_arrow_right" class="bg-blue text-white" @click="onNext"></q-btn>
       <span class="q-mr-xl text-black q-toolbar__title nowrap">{{ title() }}</span>
-      <q-select
-        outlined
-        dense
-        emit-value
-        map-options
-        label="Change theme"
-        v-model="theme"
-        :options="themesList"
-        class="float-right"
-        :class="$q.dark.isActive?'bg-black':'bg-white'"
-        style="width:130px"
-      ></q-select>
     </q-toolbar>
     <div style="width: 100%;" class="bg-white">
       <q-calendar
@@ -119,104 +107,62 @@
                 view_name: 'month',
                 events: [
                     {
-                        title: 'Conference call',
-                        date: "2020-04-14",
-                        bgcolor: 'orange'
-                    },
-                    {
-                        title: 'Conference call with Jack',
-                        date: "2020-04-24",
-                        bgcolor: 'orange'
-                    },
-                    {
-                        title: 'Conference call',
-                        date: "2020-05-15",
-                        bgcolor: 'orange'
-                    },
-                    {
-                        title: 'Conference call with Jack',
-                        date: "2020-04-03",
-                        bgcolor: 'orange'
-                    },
-                    {
-                        title: 'Give feedback',
-                        details: 'Buy a nice present',
-                        date: "2020-04-20",
-                        bgcolor: 'green',
-                        icon: 'fas fa-birthday-cake'
-                    },
-                    {
-                        title: 'Meeting',
-                        details: 'Time to pitch my idea to the company',
-                        date: "2020-04-12",
-                        bgcolor: 'blue',
-                        icon: 'fas fa-handshake'
-                    },
-                    {
-                        title: 'Meeting',
-                        details: 'Time to pitch my idea to the company',
+                        title: 'Auditoría',
+                        details: 'Auditoría',
                         date: new Date().addDays(5).toISOString().slice(0,10),
                         bgcolor: 'blue',
                         icon: 'fas fa-handshake'
                     },
                     {
-                        title: 'Lunch',
-                        details: 'Company is paying!',
+                        title: 'Junta de Empleados',
+                        details: 'Junta de Mes',
                         date: new Date().addDays(3).toISOString().slice(0,10),
                         bgcolor: 'teal',
                         icon: 'fas fa-hamburger'
                     },
                     {
-                        title: 'Leave',
-                        details: 'Always a nice chat with mom',
-                        date: "2020-04-28",
-                        bgcolor: 'blue-grey',
-                        icon: 'fas fa-car'
-                    },
-                    {
-                        title: 'Leave',
-                        details: 'Always a nice chat with mom',
+                        title: 'Visita de Técnico',
+                        details: 'Visita de Técnico',
                         date: new Date().addDays(7).toISOString().slice(0,10),
                         bgcolor: 'blue-grey',
                         icon: 'fas fa-car'
                     },
                     {
-                        title: 'Leave',
-                        details: 'Always a nice chat with mom',
-                        date: "2020-05-25",
-                        bgcolor: 'blue-grey',
-                        icon: 'fas fa-car'
-                    },
-                    {
-                        title: 'Conference call',
+                        title: 'Conferencia con CVV',
                         details: 'Teaching Javascript 101',
                         date: new Date().toISOString().slice(0,10),
                         bgcolor: 'blue',
                         icon: 'fas fa-chalkboard-teacher'
                     },
                     {
-                        title: 'Conference call',
-                        details: 'Teaching Javascript 101',
-                        date: "2020-04-07",
-                        bgcolor: 'blue',
-                        icon: 'fas fa-chalkboard-teacher'
-                    },
-                    {
-                        title: 'Rowing',
-                        details: 'Time for some weekend R&R',
+                        title: 'Calibración de Odometros',
+                        details: 'Calibración de Odometros',
                         date: new Date().addDays(9).toISOString().slice(0,10),
                         bgcolor: 'purple',
                         icon: 'rowing',
                         days: 1
                     },
                     {
-                        title: 'Meeting',
-                        details: 'Trails and hikes, going camping! Don\'t forget to bring bear spray!',
-                        date: "2020-04-09",
+                        title: 'Auditoría',
+                        details: 'Auditoría',
+                        date: new Date().addDays(16).toISOString().slice(0,10),
                         bgcolor: 'blue',
-                        icon: 'fas fa-handshake',
-                        days: 2
-                    }
+                        icon: 'fas fa-handshake'
+                    },
+                    {
+                        title: 'Junta de Empleados',
+                        details: 'Junta de Mes',
+                        date: new Date().addDays(13).toISOString().slice(0,10),
+                        bgcolor: 'teal',
+                        icon: 'fas fa-hamburger'
+                    },
+                    {
+                        title: 'Visita de Técnico',
+                        details: 'Visita de Técnico',
+                        date: new Date().addDays(20).toISOString().slice(0,10),
+                        bgcolor: 'blue-grey',
+                        icon: 'fas fa-car'
+                    },
                 ],
                 theme: {
                     name: 'default'

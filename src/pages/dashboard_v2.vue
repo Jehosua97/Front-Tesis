@@ -9,7 +9,7 @@
           >
             <div class="row">
               <div class="col-10">
-                <div class="text-h6">Nueva entrada de auto</div>
+                <div class="text-h5">Sistema de Búsqueda</div>
               </div>
               <div class="col-2">
                 <q-icon size="62px" name="trending_up" />
@@ -26,8 +26,7 @@
           >
             <div class="row">
               <div class="col-10">
-                <div class="text-h6">Datos de la verificación</div>
-                <div class="text-h5">Status: Por validar</div>
+                <div class="text-h5">Datos de la verificación</div>
               </div>
               <div class="col-2">
                 <q-icon size="62px" name="far fa-dot-circle" />
@@ -77,10 +76,17 @@
                 <center>
                   <q-btn
                     color="primary"
-                    icon-right="archive"
                     label="Buscar Auto"
                     no-caps
                     @click="findCar"
+                  />
+                  <q-btn
+                    outline style="color: primary;"
+                    icon-right="archive"
+                    label="Descargar Comprobante"
+                    no-caps
+                    :disable="disableVoucherButton"
+                    @click="downloadVoucher"
                   />
                 </center>
               </q-form>
@@ -89,22 +95,6 @@
         </div>
         <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12">
           <q-card flat bordered class="">
-            <q-card-section class="row">
-              <div class="text-h6 col-12">
-                Proceso de verificación
-                <q-btn
-                  flat
-                  dense
-                  icon="fas fa-download"
-                  class="float-right"
-                  @click="SaveImage('line')"
-                  :color="!$q.dark.isActive ? 'grey-8' : 'white'"
-                >
-                  <q-tooltip>Download</q-tooltip>
-                </q-btn>
-              </div>
-            </q-card-section>
-
             <q-separator inset></q-separator>
             <q-card-section>
               <q-form>
@@ -336,6 +326,9 @@
 import Vue from "vue";
 import IEcharts from "vue-echarts-v3/src/full.js";
 import axios from "axios";
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import image from "../assets/edomex.png";
 
 Vue.component("IEcharts", IEcharts);
 
@@ -353,6 +346,7 @@ function wrapCsvValue(val, formatFn) {
 export default {
   data() {
     return {
+      disableVoucherButton:true,
       autoId: 0,
       deposit: {},
       options: [
@@ -390,81 +384,8 @@ export default {
           },
         ],
       },
-      columns: [
-        {
-          name: "activity_id",
-          align: "left",
-          label: "Activity ID",
-          field: "activity_id",
-          sortable: true,
-        },
-        {
-          name: "desc",
-          required: true,
-          label: "Activity Name",
-          align: "left",
-          field: (row) => row.name,
-          sortable: true,
-        },
-        {
-          name: "regarding",
-          align: "left",
-          label: "Regarding",
-          field: "regarding",
-          sortable: true,
-        },
-        {
-          name: "owner",
-          align: "left",
-          label: "Owner",
-          field: "owner",
-          sortable: true,
-        },
-        {
-          name: "creation_date",
-          align: "left",
-          label: "Creation Date",
-          field: "creation_date",
-          sortable: true,
-        },
-      ],
-      data: [
-        {
-          activity_id: "C001",
-          name: "Advanced communications",
-          regarding: "Presentation",
-          owner: "John",
-          creation_date: "12-09-2019",
-        },
-        {
-          activity_id: "C002",
-          name: "New drug discussion",
-          regarding: "Meeting",
-          owner: "John",
-          creation_date: "09-02-2019",
-        },
-        {
-          activity_id: "C003",
-          name: "Universal services discussion",
-          regarding: "Meeting",
-          owner: "John",
-          creation_date: "03-25-2019",
-        },
-        {
-          activity_id: "C004",
-          name: "Add on business",
-          regarding: "Business",
-          owner: "John",
-          creation_date: "03-18-2019",
-        },
-        {
-          activity_id: "C005",
-          name: "Promotional Activity",
-          regarding: "Personal",
-          owner: "John",
-          creation_date: "04-09-2019",
-        },
-      ],
+      
+      
       pagination: {
         rowsPerPage: 10,
       },
@@ -703,68 +624,75 @@ export default {
     },
   },
   methods: {
+    downloadVoucher(){
+      let vm = this;
+      vm.disableVoucherButton = true;
+      vm.pdf()
+      vm.deposit = {};
+    },
     async findCar() {
       let vm = this;
-      //vm.deposit = {}
+      vm.disableVoucherButton = true
       var username = "admin";
       var password = "adminpw";
       if(vm.deposit.niv){
-        //Busqueda por Placas
-      let body = {
-        selector: { niv: vm.deposit.niv },
-      };
-      let config = {
-        auth: {
-          username: username,
-          password: password,
-        },
-      };
-      console.log("Deposit " + vm.deposit);
-      const response = await axios.post(
-        "http://localhost:5984/mychannel_fabcar/_find",
-        body,
-        config
-      );
-      console.log("Respuesta de la busqueda por niv===>", response);
-      if (response.data.docs.length == 0) {
-        this.$q.notify({
-          message: "No se han encontrado registros para " + vm.deposit.niv,
-        });
-        vm.deposit = {}
-      } else {
-        //Llenando los valores de la busqueda
-        vm.deposit.niv = response.data.docs[0].niv;
-        vm.deposit.bayonetaaceite = response.data.docs[0].bayonetaaceite;
-        vm.deposit.ccvvalid = response.data.docs[0].ccvvalid;
-        vm.deposit.co = response.data.docs[0].co;
-        vm.deposit.co2 = response.data.docs[0].co2;
-        vm.deposit.createdate = response.data.docs[0].createdate;
-        vm.deposit.filtroaire = response.data.docs[0].filtroaire;
-        vm.deposit.hidrocarburo = response.data.docs[0].hidrocarburo;
-        vm.deposit.id = response.data.docs[0].id;
-        vm.deposit.lambda = response.data.docs[0].lambda;
-        vm.deposit.lineaverifica = response.data.docs[0].lineaverifica;
-        vm.deposit.lucestyd = response.data.docs[0].lucestyd;
-        vm.deposit.mangueravacio = response.data.docs[0].mangueravacio;
-        vm.deposit.marca = response.data.docs[0].marca;
-        vm.deposit.modelo = response.data.docs[0].modelo;
-        vm.deposit.noxppm = response.data.docs[0].noxppm;
-        vm.deposit.o2 = response.data.docs[0].o2;
-        vm.deposit.odometroid = response.data.docs[0].odometroid;
-        vm.deposit.placas = response.data.docs[0].placas;
-        vm.deposit.ruedas = response.data.docs[0].ruedas;
-        vm.deposit.status = response.data.docs[0].status;
-        vm.deposit.tapagasolina = response.data.docs[0].tapagasolina;
-        vm.deposit.taponradiador = response.data.docs[0].taponradiador;
-        vm.deposit.tecnicoid = response.data.docs[0].tecnicoid;
-        vm.deposit.hologramaObtenido = response.data.docs[0].hologramaObtenido;
-        vm.deposit.tuboescape = response.data.docs[0].tuboescape;
-        vm.deposit.updatedate = response.data.docs[0].updatedate;
-        vm.deposit.validadorid = response.data.docs[0].validadorid;
-        vm.deposit.verificentroid = response.data.docs[0].verificentroid;
-        console.log("Objeto deposit ===>", vm.deposit);
-        vm.$forceUpdate();
-      }
+          //Busqueda por Placas
+        let body = {
+          selector: { niv: vm.deposit.niv },
+        };
+        let config = {
+          auth: {
+            username: username,
+            password: password,
+          },
+        };
+        console.log("Deposit " + vm.deposit);
+        const response = await axios.post(
+          "http://localhost:5984/mychannel_fabcar/_find",
+          body,
+          config
+        );
+        console.log("Respuesta de la busqueda por niv===>", response);
+        if (response.data.docs.length == 0) {
+          this.$q.notify({
+            message: "No se han encontrado registros para " + vm.deposit.niv,
+          });
+          vm.deposit = {}
+        } else {
+          vm.disableVoucherButton = false
+          //Llenando los valores de la busqueda
+          vm.deposit.niv = response.data.docs[0].niv;
+          vm.deposit.bayonetaaceite = response.data.docs[0].bayonetaaceite;
+          vm.deposit.ccvvalid = response.data.docs[0].ccvvalid;
+          vm.deposit.co = response.data.docs[0].co;
+          vm.deposit.co2 = response.data.docs[0].co2;
+          vm.deposit.createdate = response.data.docs[0].createdate;
+          vm.deposit.filtroaire = response.data.docs[0].filtroaire;
+          vm.deposit.hidrocarburo = response.data.docs[0].hidrocarburo;
+          vm.deposit.id = response.data.docs[0].id;
+          vm.deposit.lambda = response.data.docs[0].lambda;
+          vm.deposit.lineaverifica = response.data.docs[0].lineaverifica;
+          vm.deposit.lucestyd = response.data.docs[0].lucestyd;
+          vm.deposit.mangueravacio = response.data.docs[0].mangueravacio;
+          vm.deposit.marca = response.data.docs[0].marca;
+          vm.deposit.modelo = response.data.docs[0].modelo;
+          vm.deposit.noxppm = response.data.docs[0].noxppm;
+          vm.deposit.o2 = response.data.docs[0].o2;
+          vm.deposit.odometroid = response.data.docs[0].odometroid;
+          vm.deposit.placas = response.data.docs[0].placas;
+          vm.deposit.ruedas = response.data.docs[0].ruedas;
+          vm.deposit.status = response.data.docs[0].status;
+          vm.deposit.tapagasolina = response.data.docs[0].tapagasolina;
+          vm.deposit.taponradiador = response.data.docs[0].taponradiador;
+          vm.deposit.tecnicoid = response.data.docs[0].tecnicoid;
+          vm.deposit.hologramaObtenido = response.data.docs[0].hologramaObtenido;
+          vm.deposit.tuboescape = response.data.docs[0].tuboescape;
+          vm.deposit.updatedate = response.data.docs[0].updatedate;
+          vm.deposit.validadorid = response.data.docs[0].validadorid;
+          vm.deposit.verificentroid = response.data.docs[0].verificentroid;
+          console.log("Objeto deposit ===>", vm.deposit);
+          vm.$forceUpdate();
+        }
       }else{
          this.$q.notify({
           message: "Favor de ingresar el niv",
@@ -780,6 +708,110 @@ export default {
       downloadLink.download = type + ".png";
       downloadLink.click();
     },
+    pdf(){
+      let vm = this
+      let doc = new jsPDF();
+      //Header
+      var imgLogo = new Image();
+      imgLogo.src = image;
+      doc.addImage(imgLogo, "PNG", 10, 5, 60, 20);
+      doc.setFontSize(11);
+      doc.text(
+        "Fecha: ",
+        150,
+        25,
+        { maxWidth: 510, align: "justify" },
+      );
+      //TItle
+      doc.setFontSize(13);
+      doc.line(10, 30, 200, 30);
+      doc.text(
+        "Comprobante de Verificación Vehicular",
+        60,
+        40,
+        { maxWidth: 510, align: "justify" },
+      );
+      doc.setFontSize(11);
+      //Table 2
+      let paramsCapturados = [
+        {
+          parametro: "Oxígeno (O2)",
+          valor: vm.deposit.o2
+        },
+        {
+          parametro: "Monóxido de Carbono (CO)",
+          valor: vm.deposit.co
+        },
+        {
+          parametro: "Dióxido de Carbono (CO2)",
+          valor: vm.deposit.co2
+        },
+        {
+          parametro: "Factor Lambda	",
+          valor: vm.deposit.lambda
+        },
+        {
+          parametro: "Hidrocarburos",
+          valor: vm.deposit.hidrocarburo
+        },
+        {
+          parametro: "Óxidos de Nitrógeno (NOx ppm)",
+          valor: vm.deposit.noxppm
+        },
+      ]
+        var tableHeader = [
+        { title: "Parámetro", dataKey: "parametro" },
+        { title: "Valor", dataKey: "valor" }
+        ];
+      doc.autoTable(tableHeader, paramsCapturados, {
+        //For more details of styles in tables https://github.com/simonbengtsson/jsPDF-AutoTable
+        margin: { top: 80 },
+        theme: "grid",
+        headStyles: { fontSize: 8, halign: "center" },
+        bodyStyles: { fontSize: 8, halign: "center" },
+      });
+      //Table 2
+      let paramsVisual = [
+        {
+          parametro: "Filtro de Aire",
+          valor: vm.deposit.filtroaire
+        },
+        {
+          parametro: "Luces",
+          valor: vm.deposit.lucestyd
+        },
+        {
+          parametro: "Manguera de Vacío",
+          valor: vm.deposit.mangueravacio
+        },
+        {
+          parametro: "Llantas",
+          valor: vm.deposit.ruedas
+        },
+        {
+          parametro: "Tapa de Gasolina",
+          valor: vm.deposit.tapagasolina
+        },
+        {
+          parametro: "Tapón del Radiador",
+          valor: vm.deposit.taponradiador
+        },
+        {
+          parametro: "Tubo de escape",
+          valor: vm.deposit.tuboescape
+        },
+      ]
+      doc.autoTable(tableHeader, paramsVisual, {
+        margin: { top: 180 },
+        theme: "grid",
+        headStyles: { fontSize: 8, halign: "center" },
+        bodyStyles: { fontSize: 8, halign: "center" },
+      });
+
+      doc.save("namePDF.pdf");
+      
+    },
+
   },
 };
 </script>
@@ -795,5 +827,9 @@ export default {
 
 .orange_dark {
   background-color: #64350e;
+}
+
+button {
+  margin: 13px;
 }
 </style>
