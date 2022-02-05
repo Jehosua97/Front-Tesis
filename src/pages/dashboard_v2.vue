@@ -329,6 +329,7 @@ import axios from "axios";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import image from "../assets/edomex.png";
+import firma from "../assets/firma.png";
 
 Vue.component("IEcharts", IEcharts);
 
@@ -708,6 +709,44 @@ export default {
       downloadLink.download = type + ".png";
       downloadLink.click();
     },
+     currentDate() {
+      let date = new Date();
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      let hour = date.getHours();
+      let minutes = date.getMinutes();
+      let seconds = date.getSeconds();
+      if (month < 10) {
+        var data =
+          (day < 10 ? "0"+day : day) +
+          "-0" +
+          month +
+          "-" +
+          year +
+          " " +
+          hour +
+          ":" +
+          minutes +
+          ":" +
+          seconds;
+        return data;
+      } else {
+        var data =
+          (day < 10 ? "0"+day : day) +
+          "-" +
+          month +
+          "-" +
+          year +
+          " " +
+          hour +
+          ":" +
+          minutes +
+          ":" +
+          seconds;
+        return data;
+      }
+    },
     pdf(){
       let vm = this
       let doc = new jsPDF();
@@ -717,21 +756,70 @@ export default {
       doc.addImage(imgLogo, "PNG", 10, 5, 60, 20);
       doc.setFontSize(11);
       doc.text(
-        "Fecha: ",
+        "Estatus: "+ vm.deposit.status,
+        150,
+        15,
+        { maxWidth: 510, align: "justify" },
+      );
+      doc.text(
+        "Fecha: "+vm.currentDate(),
         150,
         25,
         { maxWidth: 510, align: "justify" },
       );
       //TItle
-      doc.setFontSize(13);
+      doc.setFontSize(14);
       doc.line(10, 30, 200, 30);
       doc.text(
         "Comprobante de Verificación Vehicular",
-        60,
+        65,
         40,
         { maxWidth: 510, align: "justify" },
       );
       doc.setFontSize(11);
+      //General Data
+      //Primera Columna
+      doc.text('Placas: '+vm.deposit.placas,
+        100,
+        50,
+        { maxWidth: 510, align: "justify" },
+      );
+      doc.text('NIV: '+vm.deposit.niv,
+        100,
+        55,
+        { maxWidth: 510, align: "justify" },
+      );
+      doc.text('Marca: '+vm.deposit.marca,
+        100,
+        60,
+        { maxWidth: 510, align: "justify" },
+      );
+      doc.text('Modelo: '+vm.deposit.modelo,
+        100,
+        65,
+        { maxWidth: 510, align: "justify" },
+      );
+      //Segunda Columna
+      doc.text('CVV Origen: '+vm.deposit.verificentroid,
+        15,
+        50,
+        { maxWidth: 510, align: "justify" },
+      );
+      doc.text('Técnico ID: '+vm.deposit.tecnicoid,
+        15,
+        55,
+        { maxWidth: 510, align: "justify" },
+      );
+      doc.text('Número de linea: '+vm.deposit.lineaverifica,
+        15,
+        60,
+        { maxWidth: 510, align: "justify" },
+      );
+      doc.text('Odómetro ID: '+vm.deposit.odometroid,
+        15,
+        65,
+        { maxWidth: 510, align: "justify" },
+      );
       //Table 2
       let paramsCapturados = [
         {
@@ -763,9 +851,15 @@ export default {
         { title: "Parámetro", dataKey: "parametro" },
         { title: "Valor", dataKey: "valor" }
         ];
+      doc.text(
+        "Valores Capturados e Inspección Visual",
+        70,
+        85,
+        { maxWidth: 510, align: "justify" },
+      );
       doc.autoTable(tableHeader, paramsCapturados, {
         //For more details of styles in tables https://github.com/simonbengtsson/jsPDF-AutoTable
-        margin: { top: 80 },
+        margin: { top: 90 },
         theme: "grid",
         headStyles: { fontSize: 8, halign: "center" },
         bodyStyles: { fontSize: 8, halign: "center" },
@@ -799,14 +893,37 @@ export default {
         {
           parametro: "Tubo de escape",
           valor: vm.deposit.tuboescape
-        },
-      ]
-      doc.autoTable(tableHeader, paramsVisual, {
-        margin: { top: 180 },
+        }
+      ];
+      var tableHeader1 = [
+        { title: "Parámetro", dataKey: "parametro" },
+        { title: "Valor", dataKey: "valor" }
+        ];
+      doc.autoTable(tableHeader1, paramsVisual, {
+        margin: { top: 30 },
         theme: "grid",
         headStyles: { fontSize: 8, halign: "center" },
         bodyStyles: { fontSize: 8, halign: "center" },
       });
+      doc.text(
+        "Documento no oficial, válido unicamente para propósitos administrativos dentro del Centro de Verificación Vehicular origen. Los resultados presentados deberán ser validados por alguna entidad verificadora diferente a la origen, por lo que se deberá revisar el status actual de la transacción así como la fecha en la que se genera el presente documento.",
+        15,
+        210,
+        { maxWidth: 180, align: "justify" },
+      );
+
+
+      var firmaImagen = new Image();
+      firmaImagen.src = firma;
+      doc.addImage(firmaImagen, "PNG", 70, 240, 60, 20);
+      doc.setFontSize(12);
+      doc.line(50, 260, 150, 260);
+      doc.text(
+        "Ing. Rogelio Sanchez Campos",
+        70,
+        265,
+        { maxWidth: 510, align: "justify" },
+      );
 
       doc.save("namePDF.pdf");
       

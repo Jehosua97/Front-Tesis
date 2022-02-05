@@ -749,7 +749,7 @@ export default {
       let seconds = date.getSeconds();
       if (month < 10) {
         var data =
-          day +
+          (day < 10 ? "0"+day : day)  +
           "-0" +
           month +
           "-" +
@@ -763,7 +763,7 @@ export default {
         return data;
       } else {
         var data =
-          day +
+          (day < 10 ? "0"+day : day)  +
           "-" +
           month +
           "-" +
