@@ -295,9 +295,16 @@ import Vue from "vue";
 import IEcharts from "vue-echarts-v3/src/full.js";
 import axios from "axios";
 import lockr from "lockr";
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import image from "../assets/edomex.png";
+import firma from "../assets/firma.png";
+import no from "../assets/no.png";
+import doblecero from "../assets/00.png";
+import cero from "../assets/0.png";
+import uno from "../assets/1.png";
+import dos from "../assets/2.png";
+
 Vue.component("IEcharts", IEcharts);
 
 function wrapCsvValue(val, formatFn) {
@@ -796,9 +803,8 @@ export default {
       vm.insertAllData = false;
       vm.iniciarVerificacionbutton = false;
       vm.multasFlag = false;
-      vm.deposit = {};
       vm.takingValues = false;
-      vm.pdf()
+      vm.pdf();
     },
     showTextLoading() {
       let vm = this;
@@ -1167,7 +1173,7 @@ export default {
       let seconds = date.getSeconds();
       if (month < 10) {
         var data =
-          (day < 10 ? "0"+day : day)  +
+          (day < 10 ? "0" + day : day) +
           "-0" +
           month +
           "-" +
@@ -1181,7 +1187,7 @@ export default {
         return data;
       } else {
         var data =
-          (day < 10 ? "0"+day : day)  +
+          (day < 10 ? "0" + day : day) +
           "-" +
           month +
           "-" +
@@ -1212,113 +1218,135 @@ export default {
         }
       }
     },
-    pdf(){
-      let vm = this
+    pdf() {
+      let vm = this;
       let doc = new jsPDF();
       //Header
       var imgLogo = new Image();
       imgLogo.src = image;
       doc.addImage(imgLogo, "PNG", 10, 5, 60, 20);
       doc.setFontSize(11);
-      doc.text(
-        "Fecha: ",
-        150,
-        25,
-        { maxWidth: 510, align: "justify" },
-      );
+      doc.text("Estatus: " + vm.deposit.status, 150, 15, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Fecha: " + vm.currentDate(), 150, 25, {
+        maxWidth: 510,
+        align: "justify",
+      });
       //TItle
-      doc.setFontSize(13);
+      doc.setFontSize(14);
       doc.line(10, 30, 200, 30);
-      doc.text(
-        "Comprobante de Verificación Vehicular",
-        65,
-        40,
-        { maxWidth: 510, align: "justify" },
-      );
+      doc.text("Comprobante de Verificación Vehicular", 65, 40, {
+        maxWidth: 510,
+        align: "justify",
+      });
       doc.setFontSize(11);
       //General Data
       //Primera Columna
-      doc.text('Placas: '+vm.deposit.placas,
-        100,
-        60,
-        { maxWidth: 510, align: "justify" },
-      );
-      doc.text('NIV: '+vm.deposit.niv,
-        100,
-        65,
-        { maxWidth: 510, align: "justify" },
-      );
-      doc.text('Marca: '+vm.deposit.marca,
-        100,
-        70,
-        { maxWidth: 510, align: "justify" },
-      );
-      doc.text('Modelo: '+vm.deposit.modelo,
-        100,
-        75,
-        { maxWidth: 510, align: "justify" },
-      );
+      doc.text("Placas: " + vm.deposit.placas, 100, 50, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("NIV: " + vm.deposit.niv, 100, 55, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Marca: " + vm.deposit.marca, 100, 60, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Modelo: " + vm.deposit.modelo, 100, 65, {
+        maxWidth: 510,
+        align: "justify",
+      });
       //Segunda Columna
-      doc.text('CVV Origen: '+vm.deposit.verificentroid,
-        15,
-        60,
-        { maxWidth: 510, align: "justify" },
-      );
-      doc.text('Técnico ID: '+vm.deposit.tecnicoid,
-        15,
-        65,
-        { maxWidth: 510, align: "justify" },
-      );
-      doc.text('Número de linea: '+vm.deposit.lineaverifica,
-        15,
-        70,
-        { maxWidth: 510, align: "justify" },
-      );
-      doc.text('Odómetro ID: '+vm.deposit.odometroid,
-        15,
-        75,
-        { maxWidth: 510, align: "justify" },
-      );
+      doc.text("CVV Origen: " + vm.deposit.verificentroid, 15, 50, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Técnico ID: " + vm.deposit.tecnicoid, 15, 55, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Número de linea: " + vm.deposit.lineaverifica, 15, 60, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Odómetro ID: " + vm.deposit.odometroid, 15, 65, {
+        maxWidth: 510,
+        align: "justify",
+      });
+
+      //Load the Holograma images
+      var imgno = new Image();
+      var imgdoblecero = new Image();
+      var imgcero = new Image();
+      var imguno = new Image();
+      var imgdos = new Image();
+      imgno.src = no;
+      imgdoblecero.src = doblecero;
+      imgcero.src = cero;
+      imguno.src = uno;
+      imgdos.src = dos;
+      if (
+        vm.deposit.status == "Por validar" ||
+        vm.deposit.hologramaObtenido == "Sin Holograma"
+      ) {
+        doc.addImage(imgno, "PNG", 160, 40, 35, 35);
+      }
+      if (vm.deposit.hologramaObtenido == "Doble Cero") {
+        doc.addImage(imgdoblecero, "PNG", 160, 40, 35, 35);
+      }
+      if (vm.deposit.hologramaObtenido == "Cero") {
+        doc.addImage(imgcero, "PNG", 160, 40, 35, 35);
+      }
+      if (vm.deposit.hologramaObtenido == "Uno") {
+        doc.addImage(imguno, "PNG", 160, 40, 35, 35);
+      }
+      if (vm.deposit.hologramaObtenido == "Dos") {
+        doc.addImage(imgdos, "PNG", 160, 40, 35, 35);
+      }
+
       //Table 2
+      debugger;
       let paramsCapturados = [
         {
           parametro: "Oxígeno (O2)",
-          valor: vm.deposit.o2
+          valor: vm.deposit.o2,
         },
         {
           parametro: "Monóxido de Carbono (CO)",
-          valor: vm.deposit.co
+          valor: vm.deposit.co,
         },
         {
           parametro: "Dióxido de Carbono (CO2)",
-          valor: vm.deposit.co2
+          valor: vm.deposit.co2,
         },
         {
           parametro: "Factor Lambda	",
-          valor: vm.deposit.lambda
+          valor: vm.deposit.lambda,
         },
         {
           parametro: "Hidrocarburos",
-          valor: vm.deposit.hidrocarburo
+          valor: vm.deposit.hidrocarburo,
         },
         {
           parametro: "Óxidos de Nitrógeno (NOx ppm)",
-          valor: vm.deposit.noxppm
+          valor: vm.deposit.noxppm,
         },
-      ]
-        var tableHeader = [
+      ];
+      var tableHeader = [
         { title: "Parámetro", dataKey: "parametro" },
-        { title: "Valor", dataKey: "valor" }
-        ];
-      doc.text(
-        "Valores Capturados",
-        80,
-        100,
-        { maxWidth: 510, align: "justify" },
-      );
+        { title: "Valor", dataKey: "valor" },
+      ];
+      doc.text("Valores Capturados e Inspección Visual", 70, 85, {
+        maxWidth: 510,
+        align: "justify",
+      });
       doc.autoTable(tableHeader, paramsCapturados, {
         //For more details of styles in tables https://github.com/simonbengtsson/jsPDF-AutoTable
-        margin: { top: 110 },
+        margin: { top: 90 },
         theme: "grid",
         headStyles: { fontSize: 8, halign: "center" },
         bodyStyles: { fontSize: 8, halign: "center" },
@@ -1327,48 +1355,64 @@ export default {
       let paramsVisual = [
         {
           parametro: "Filtro de Aire",
-          valor: vm.deposit.filtroaire
+          valor: vm.deposit.filtroaire,
         },
         {
           parametro: "Luces",
-          valor: vm.deposit.lucestyd
+          valor: vm.deposit.lucestyd,
         },
         {
           parametro: "Manguera de Vacío",
-          valor: vm.deposit.mangueravacio
+          valor: vm.deposit.mangueravacio,
         },
         {
           parametro: "Llantas",
-          valor: vm.deposit.ruedas
+          valor: vm.deposit.ruedas,
         },
         {
           parametro: "Tapa de Gasolina",
-          valor: vm.deposit.tapagasolina
+          valor: vm.deposit.tapagasolina,
         },
         {
           parametro: "Tapón del Radiador",
-          valor: vm.deposit.taponradiador
+          valor: vm.deposit.taponradiador,
         },
         {
           parametro: "Tubo de escape",
-          valor: vm.deposit.tuboescape
+          valor: vm.deposit.tuboescape,
         },
-      ]
-      doc.text(
-        "Inspección Visual",
-        80,
-        160,
-        { maxWidth: 510, align: "justify" },
-      );
-      doc.autoTable(tableHeader, paramsVisual, {
-        margin: { top: 280 },
+      ];
+      var tableHeader1 = [
+        { title: "Parámetro", dataKey: "parametro" },
+        { title: "Valor", dataKey: "valor" },
+      ];
+      doc.autoTable(tableHeader1, paramsVisual, {
+        margin: { top: 30 },
         theme: "grid",
         headStyles: { fontSize: 8, halign: "center" },
         bodyStyles: { fontSize: 8, halign: "center" },
       });
+      doc.text(
+        "Documento no oficial, válido unicamente para propósitos administrativos dentro del Centro de Verificación Vehicular origen. Los resultados presentados deberán ser validados por alguna entidad verificadora diferente a la origen, por lo que se deberá revisar el status actual de la transacción así como la fecha en la que se genera el presente documento.",
+        15,
+        210,
+        { maxWidth: 180, align: "justify" }
+      );
 
-      doc.save("namePDF.pdf");
-      
+      var firmaImagen = new Image();
+      firmaImagen.src = firma;
+      if (vm.deposit.status != "Por validar") {
+        doc.addImage(firmaImagen, "PNG", 70, 240, 60, 20);
+      }
+      doc.setFontSize(12);
+      doc.line(50, 260, 150, 260);
+      doc.text("Ing. Rogelio Sanchez Campos", 70, 265, {
+        maxWidth: 510,
+        align: "justify",
+      });
+
+      doc.save(vm.deposit.niv + ".pdf");
+      vm.deposit = {};
     },
     //Busqueda en todo el ledger
     async ConectDB() {

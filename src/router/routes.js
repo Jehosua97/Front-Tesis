@@ -8,7 +8,6 @@ const routes = [
       { path: '/dashboard', component: () => import('pages/dashboard.vue') },
       { path: '/dashboard_v2', component: () => import('pages/dashboard_v2.vue') },
       { path: '/dashboard_v3', component: () => import('pages/dashboard_v3.vue') },
-      { path: '/my_profile', component: () => import('pages/my_profile.vue') },
       { path: '/transactions', component: () => import('pages/transactions.vue') },
       { path: '/calendar', component: () => import('pages/calendar.vue') },
     ]

@@ -17,7 +17,10 @@
         <!--            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">-->
         <!--          </q-avatar>-->
 
-        <q-toolbar-title>Sistema de Verificación Vehicular del Estado de México</q-toolbar-title>
+        <q-toolbar-title
+          >Sistema de Verificación Vehicular del Estado de
+          México</q-toolbar-title
+        >
         <q-btn
           class="q-mr-xs"
           flat
@@ -39,7 +42,9 @@
       class="left-navigation text-white"
       show-if-above
       v-model="left"
-      style="background-image: url(https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg) !important;"
+      style="
+        background-image: url(https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg) !important;
+      "
       side="left"
       elevated
     >
@@ -47,16 +52,17 @@
         class="full-height"
         :class="$q.dark.isActive ? 'drawer_dark' : 'drawer_normal'"
       >
-        <div style="height: calc(100% - 117px);padding:10px;">
+        <div style="height: calc(100% - 117px); padding: 10px">
           <q-toolbar>
             <q-avatar>
+              <!--Aqui poner el avatar-->
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
 
-            <q-toolbar-title>{{userId}}</q-toolbar-title>
+            <q-toolbar-title>{{ userId }}</q-toolbar-title>
           </q-toolbar>
           <hr />
-          <q-scroll-area style="height:100%;">
+          <q-scroll-area style="height: 100%">
             <q-list padding>
               <q-item
                 active-class="tab-active"
@@ -70,9 +76,7 @@
                   <q-icon name="dashboard" />
                 </q-item-section>
 
-                <q-item-section>
-                  Registrar entrada
-                </q-item-section>
+                <q-item-section> Registrar entrada </q-item-section>
               </q-item>
 
               <q-item
@@ -87,11 +91,9 @@
                   <q-icon name="dashboard" />
                 </q-item-section>
 
-                <q-item-section>
-                  Busqueda por NIV
-                </q-item-section>
+                <q-item-section> Descarga de Comprobantes </q-item-section>
               </q-item>
-              
+
               <q-item
                 active-class="tab-active"
                 to="/transactions"
@@ -103,9 +105,7 @@
                   <q-icon name="assignment" />
                 </q-item-section>
 
-                <q-item-section>
-                  Transacciones Asignadas
-                </q-item-section>
+                <q-item-section> Transacciones Asignadas </q-item-section>
               </q-item>
 
               <q-item
@@ -120,9 +120,7 @@
                   <q-icon name="dashboard" />
                 </q-item-section>
 
-                <q-item-section>
-                  Consulta Global
-                </q-item-section>
+                <q-item-section> Consulta Global </q-item-section>
               </q-item>
 
               <q-item
@@ -136,27 +134,7 @@
                   <q-icon name="calendar_today" />
                 </q-item-section>
 
-                <q-item-section>
-                  Calendar
-                </q-item-section>
-              </q-item>
-
-              
-
-              <q-item
-                active-class="tab-active"
-                to="/my_profile"
-                class="q-ma-sm navigation-item"
-                clickable
-                v-ripple
-              >
-                <q-item-section avatar>
-                  <q-icon name="drafts" />
-                </q-item-section>
-
-                <q-item-section>
-                  My Profile
-                </q-item-section>
+                <q-item-section> Calendario </q-item-section>
               </q-item>
             </q-list>
           </q-scroll-area>
@@ -184,24 +162,24 @@ import lockr from "lockr";
 export default {
   data() {
     return {
-      left: false
+      left: false,
     };
   },
   computed: {
-    userId(){
-      return lockr.get("userId")
+    userId() {
+      return lockr.get("userId");
     },
-    currentToken(){
-      return lockr.get("currentToken")
+    currentToken() {
+      return lockr.get("currentToken");
     },
   },
   methods: {
     logoutNotify() {
       this.$q.notify({
-        message: "Logged out"
+        message: "Logged out",
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

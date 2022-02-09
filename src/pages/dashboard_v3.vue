@@ -20,7 +20,7 @@
                   dense
                   debounce="300"
                   v-model="filter"
-                  placeholder="Search"
+                  placeholder="Buscar"
                 >
                   <template v-slot:append>
                     <q-icon name="search" />
@@ -63,7 +63,7 @@
                 <q-btn
                   color="primary"
                   icon-right="archive"
-                  label="Export to csv"
+                  label="Descargar csv"
                   no-caps
                   @click="exportDepositsTable"
                 />
@@ -156,11 +156,38 @@
                 Odómetro ID: {{ dataSelected.odometroid }}
               </div>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-              <q-img
-                class="rounded-borders"
-                src="https://cdn.quasar.dev/img/boy-avatar.png"
-              />
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="
+                dataSelected.hologramaObtenido == 'Sin Holograma' ||
+                dataSelected.status == 'Por validar'
+              "
+            >
+              <q-img class="rounded-borders" src="../assets/no.png" />
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="dataSelected.hologramaObtenido == 'Doble Cero'"
+            >
+              <q-img class="rounded-borders" src="../assets/00.png" />
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="dataSelected.hologramaObtenido == 'Cero'"
+            >
+              <q-img class="rounded-borders" src="../assets/0.png" />
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="dataSelected.hologramaObtenido == 'Uno'"
+            >
+              <q-img class="rounded-borders" src="../assets/1.png" />
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="dataSelected.hologramaObtenido == 'Dos'"
+            >
+              <q-img class="rounded-borders" src="../assets/2.png" />
             </div>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
               <q-chip

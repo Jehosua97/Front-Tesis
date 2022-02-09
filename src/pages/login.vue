@@ -14,13 +14,7 @@
           @click="$q.dark.toggle()"
           :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
         />
-        <q-btn
-          color="white"
-          class="absolute-top-left"
-          flat
-          round
-          :icon="$q.dark.isActive ? 'nights_stay' : 'wb_sunny'"
-        />
+
         <q-card
           class="login-form"
           v-bind:style="
@@ -37,35 +31,29 @@
               <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
             </q-avatar>
             <div class="row no-wrap items-center">
-              <div class="col text-h6 ellipsis">Log in to Dashboard</div>
+              <div class="col text-h6 ellipsis">
+                Ingrese usuario y contraseña
+              </div>
             </div>
           </q-card-section>
           <q-card-section>
             <q-form class="q-gutter-md">
-              <q-input filled v-model="username" label="Username" lazy-rules />
+              <q-input filled v-model="username" label="Usuario" lazy-rules />
 
               <q-input
                 type="password"
                 filled
                 v-model="password"
-                label="Password"
+                label="Contraseña"
                 lazy-rules
               />
               <div>
                 <q-btn
-                  label="Login"
+                  label="Ingresar"
                   type="button"
                   color="primary"
                   @click="loginSubmit"
                 />
-                <a
-                  style="font-size: 30px"
-                  class="float-right"
-                  href="https://github.com/sponsors/mayank091193"
-                  target="_blank"
-                  title="Donate"
-                  ><i class="fas fa-heart" style="color: #eb5daa"></i
-                ></a>
               </div>
             </q-form>
           </q-card-section>
@@ -81,7 +69,7 @@ import axios from "axios";
 import { saveAs } from "file-saver";
 import fs from "fs";
 import dashboardVue from "./dashboard.vue";
-import lockr from "lockr"
+import lockr from "lockr";
 
 export default {
   data() {
@@ -133,24 +121,27 @@ export default {
       //Autenticando al usuario
       if (vm.users.includes(vm.username) && vm.password == vm.username) {
         console.log("BIENVENIDO USUARIO ====>", vm.username);
-        lockr.set("userId",vm.username)
-        let flag = 1
-        let index = 0
-        while (flag){
-           let data = await vm.createUsers(vm.username + "_",index)
+        lockr.set("userId", vm.username);
+        let flag = 1;
+        let index = 0;
+        while (flag) {
+          let data = await vm.createUsers(vm.username + "_", index);
           //El usuario ya existe en el ledger y se va a registrar en la BD
-          console.log(data)
+          console.log(data);
           if (data.data.message.includes("fabric-ca request register failed")) {
-            debugger
-            index++
-            await vm.createUsers(vm.username.substring(0,vm.username.lastIndexOf("_")+1), index)
+            debugger;
+            index++;
+            await vm.createUsers(
+              vm.username.substring(0, vm.username.lastIndexOf("_") + 1),
+              index
+            );
           } else {
-            debugger
-            console.log("Usuario nuevo " + vm.username );
-            flag = 0
-            console.log("Soy el Token actual====>",data.data.token);
-            lockr.set("currentToken",data.data.token)
-            debugger
+            debugger;
+            console.log("Usuario nuevo " + vm.username);
+            flag = 0;
+            console.log("Soy el Token actual====>", data.data.token);
+            lockr.set("currentToken", data.data.token);
+            debugger;
             vm.$router.push("/dashboard");
           }
         }
@@ -159,26 +150,6 @@ export default {
         vm.password = "";
       }
     },
-    /*async checkUserExist() {
-      let vm = this;
-      let body = {
-        selector: {
-          user: vm.username,
-        },
-      };
-      const response = await axios.post(
-        "http://localhost:5984/user_front/_find",
-        body,
-        vm.config
-      );
-      if (response.data.docs[0] == undefined) {
-        //No existe el usuario
-        return 0;
-      } else {
-        //Ya existe el usuario
-        return response.data.docs[0];
-      }
-    },*/
     async createUsers(dinamicUser, index) {
       let vm = this;
       let org = "Org" + vm.username.substring(4);
@@ -188,35 +159,12 @@ export default {
       };
       //Creando usuario en el ledger
       let data = await axios.post("http://localhost:4000/users", body);
-      return data
+      return data;
     },
-    /*async saveUserBD(user, token) {
-      let vm = this;
-      let body = {
-        user: user,
-        token: token,
-      };
-      debugger;
-      const response = await axios.put(
-        "http://localhost:5984/user_front/new_doc",
-        body,
-        vm.config
-      );
-      console.log("GUARDANDO USAUARIO EN LA BD====>", response);
-    },*/
-
-    /*loadTextFromFile(ev) {
-      let vm = this;
-      const file = ev.target.files[0];
-      //let url = URL.createObjectURL(file)
-      const reader = new FileReader();
-      reader.onload = (e) => (vm.stringPwd = e.target.result);
-      reader.readAsText(file);
-    },*/
   },
 
   mounted() {
-    debugger
+    debugger;
     particlesJS("particles-js", {
       particles: {
         number: {
@@ -341,7 +289,7 @@ export default {
   background-position: 50% 50%;
 }
 .normal_gradient {
-  background: linear-gradient(145deg, rgb(74, 94, 137) 15%, #b61924 70%);
+  background: linear-gradient(145deg, rgb(88, 201, 111) 15%, #1e5259 70%);
 }
 .dark_gradient {
   background: linear-gradient(145deg, rgb(11, 26, 61) 15%, #4c1014 70%);

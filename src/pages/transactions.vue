@@ -142,7 +142,7 @@
                   dense
                   debounce="300"
                   v-model="filter"
-                  placeholder="Search"
+                  placeholder="Buscar"
                 >
                   <template v-slot:append>
                     <q-icon name="search" />
@@ -185,7 +185,7 @@
                 <q-btn
                   color="primary"
                   icon-right="archive"
-                  label="Export to csv"
+                  label="Descargar csv"
                   no-caps
                   @click="exportDepositsTable"
                 />
@@ -269,13 +269,43 @@
                 Odómetro ID: {{ dataSelected.odometroid }}
               </div>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-              <q-img
-                class="rounded-borders"
-                src="https://cdn.quasar.dev/img/boy-avatar.png"
-              />
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="
+                dataSelected.hologramaObtenido == 'Sin Holograma' ||
+                dataSelected.status == 'Por validar'
+              "
+            >
+              <q-img class="rounded-borders" src="../assets/no.png" />
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" v-if="this.itemActual.status == 'Por validar'">
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="dataSelected.hologramaObtenido == 'Doble Cero'"
+            >
+              <q-img class="rounded-borders" src="../assets/00.png" />
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="dataSelected.hologramaObtenido == 'Cero'"
+            >
+              <q-img class="rounded-borders" src="../assets/0.png" />
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="dataSelected.hologramaObtenido == 'Uno'"
+            >
+              <q-img class="rounded-borders" src="../assets/1.png" />
+            </div>
+            <div
+              class="col-lg-4 col-md-4 col-sm-12 col-xs-12"
+              v-if="dataSelected.hologramaObtenido == 'Dos'"
+            >
+              <q-img class="rounded-borders" src="../assets/2.png" />
+            </div>
+            <div
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              v-if="this.itemActual.status == 'Por validar'"
+            >
               <q-btn
                 v-on:click="asignarHologramaShow = true"
                 color="primary"
@@ -284,7 +314,13 @@
                 :disable="this.itemActual.status == 'Validado'"
               />
             </div>
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" v-if="this.itemActual.status == 'Validado' || this.itemActual.status == 'Rechazado'">
+            <div
+              class="col-lg-12 col-md-12 col-sm-12 col-xs-12"
+              v-if="
+                this.itemActual.status == 'Validado' ||
+                this.itemActual.status == 'Rechazado'
+              "
+            >
               <q-chip
                 :color="
                   this.itemActual.status == 'Por validar'
@@ -411,13 +447,13 @@
               placeholder="Comentario (Opcional)"
             />
           </div>
-            <div class="q-pa-md q-gutter-sm">
-              <q-btn
-                color="primary"
-                label="Guardar y Descargar Comprobante"
-                @click="asignaHolograma()"
-              />
-            </div>
+          <div class="q-pa-md q-gutter-sm">
+            <q-btn
+              color="primary"
+              label="Guardar y Descargar Comprobante"
+              @click="asignaHolograma()"
+            />
+          </div>
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -428,6 +464,15 @@
 import { exportFile } from "quasar";
 import axios from "axios";
 import lockr from "lockr";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import image from "../assets/edomex.png";
+import firma from "../assets/firma.png";
+import no from "../assets/no.png";
+import doblecero from "../assets/00.png";
+import cero from "../assets/0.png";
+import uno from "../assets/1.png";
+import dos from "../assets/2.png";
 
 function wrapCsvValue(val, formatFn) {
   let formatted = formatFn !== void 0 ? formatFn(val) : val;
@@ -443,9 +488,9 @@ function wrapCsvValue(val, formatFn) {
 export default {
   data() {
     return {
-      coment:"",
-      hologramaSelected:"",
-      itemActual:{},
+      coment: "",
+      hologramaSelected: "",
+      itemActual: {},
       asignarHologramaShow: false,
       tab: "valores",
       dataSelected: {},
@@ -580,6 +625,11 @@ export default {
     },
   },
   methods: {
+    getImgUrl(pet) {
+      var images = require.context("../assets/", false, /\.png$/);
+      console.log(pet);
+      return images("./" + pet + ".png");
+    },
     sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     },
@@ -589,6 +639,7 @@ export default {
       await vm.sleep(2000);
       vm.employee_dialog = false;
       console.log("Soy el item del holograma===", vm.itemActual);
+      await vm.pdf();
       await vm.insertLedger(vm.currentToken);
       await vm.findCar();
     },
@@ -724,7 +775,7 @@ export default {
         vm.totalAsignadas = 0;
         vm.porRevisar = 0;
         vm.revisadas = 0;
-      } else {  
+      } else {
         //Llenando los valores de la busqueda
         vm.deposit = response.data.docs;
         console.log("Objeto deposit ===>", vm.deposit);
@@ -749,7 +800,7 @@ export default {
       let seconds = date.getSeconds();
       if (month < 10) {
         var data =
-          (day < 10 ? "0"+day : day)  +
+          (day < 10 ? "0" + day : day) +
           "-0" +
           month +
           "-" +
@@ -763,7 +814,7 @@ export default {
         return data;
       } else {
         var data =
-          (day < 10 ? "0"+day : day)  +
+          (day < 10 ? "0" + day : day) +
           "-" +
           month +
           "-" +
@@ -779,12 +830,12 @@ export default {
     },
     async insertLedger(token) {
       let vm = this;
-      console.log("Soy el holograma seleccionado==== ",vm.hologramaSelected);
-      let miStatus = ""
-      if(vm.hologramaSelected == "Sin Holograma"){
-        miStatus = "Rechazado"
-      }else{
-        miStatus = "Validado"
+      console.log("Soy el holograma seleccionado==== ", vm.hologramaSelected);
+      let miStatus = "";
+      if (vm.hologramaSelected == "Sin Holograma") {
+        miStatus = "Rechazado";
+      } else {
+        miStatus = "Validado";
       }
       let updateDate = await vm.currentDate();
       let arg = [
@@ -861,19 +912,215 @@ export default {
         headers: { Authorization: `Bearer ${token}` },
       };
       console.log("Deposit " + vm.itemActual);
-      debugger
-      await axios
-        .post(
-          "http://localhost:4000/channels/mychannel/chaincodes/fabcar",
-          body,
-          config
-        )
+      debugger;
+      await axios.post(
+        "http://localhost:4000/channels/mychannel/chaincodes/fabcar",
+        body,
+        config
+      );
       vm.itemActual = {};
       console.log("Auto actualizado en Ledger");
       this.$q.notify({
-            message: "Datos ingresados con éxito",
-          });
+        message: "Datos ingresados con éxito",
+      });
       vm.$forceUpdate();
+    },
+    pdf() {
+      let vm = this;
+      let doc = new jsPDF();
+      //Header
+      var imgLogo = new Image();
+      imgLogo.src = image;
+      doc.addImage(imgLogo, "PNG", 10, 5, 60, 20);
+      doc.setFontSize(11);
+      doc.text("Estatus: " + vm.itemActual.status, 150, 15, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      debugger;
+      doc.text("Fecha: " + vm.currentDate(), 150, 25, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      //TItle
+      doc.setFontSize(14);
+      doc.line(10, 30, 200, 30);
+      doc.text("Comprobante de Verificación Vehicular", 65, 40, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.setFontSize(11);
+      //General Data
+      //Primera Columna
+      doc.text("Placas: " + vm.itemActual.placas, 100, 50, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("NIV: " + vm.itemActual.niv, 100, 55, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Marca: " + vm.itemActual.marca, 100, 60, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Modelo: " + vm.itemActual.modelo, 100, 65, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      //Segunda Columna
+      doc.text("CVV Origen: " + vm.itemActual.verificentroid, 15, 50, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Técnico ID: " + vm.itemActual.tecnicoid, 15, 55, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Número de linea: " + vm.itemActual.lineaverifica, 15, 60, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.text("Odómetro ID: " + vm.itemActual.odometroid, 15, 65, {
+        maxWidth: 510,
+        align: "justify",
+      });
+
+      //Load the Holograma images
+      var imgno = new Image();
+      var imgdoblecero = new Image();
+      var imgcero = new Image();
+      var imguno = new Image();
+      var imgdos = new Image();
+      imgno.src = no;
+      imgdoblecero.src = doblecero;
+      imgcero.src = cero;
+      imguno.src = uno;
+      imgdos.src = dos;
+      if (
+        vm.itemActual.status == "Por validar" ||
+        vm.itemActual.hologramaObtenido == "Sin Holograma"
+      ) {
+        doc.addImage(imgno, "PNG", 160, 40, 35, 35);
+      }
+      if (vm.itemActual.hologramaObtenido == "Doble Cero") {
+        doc.addImage(imgdoblecero, "PNG", 160, 40, 35, 35);
+      }
+      if (vm.itemActual.hologramaObtenido == "Cero") {
+        doc.addImage(imgcero, "PNG", 160, 40, 35, 35);
+      }
+      if (vm.itemActual.hologramaObtenido == "Uno") {
+        doc.addImage(imguno, "PNG", 160, 40, 35, 35);
+      }
+      if (vm.itemActual.hologramaObtenido == "Dos") {
+        doc.addImage(imgdos, "PNG", 160, 40, 35, 35);
+      }
+
+      //Table 2
+      debugger;
+      let paramsCapturados = [
+        {
+          parametro: "Oxígeno (O2)",
+          valor: vm.itemActual.o2,
+        },
+        {
+          parametro: "Monóxido de Carbono (CO)",
+          valor: vm.itemActual.co,
+        },
+        {
+          parametro: "Dióxido de Carbono (CO2)",
+          valor: vm.itemActual.co2,
+        },
+        {
+          parametro: "Factor Lambda	",
+          valor: vm.itemActual.lambda,
+        },
+        {
+          parametro: "Hidrocarburos",
+          valor: vm.itemActual.hidrocarburo,
+        },
+        {
+          parametro: "Óxidos de Nitrógeno (NOx ppm)",
+          valor: vm.itemActual.noxppm,
+        },
+      ];
+      var tableHeader = [
+        { title: "Parámetro", dataKey: "parametro" },
+        { title: "Valor", dataKey: "valor" },
+      ];
+      doc.text("Valores Capturados e Inspección Visual", 70, 85, {
+        maxWidth: 510,
+        align: "justify",
+      });
+      doc.autoTable(tableHeader, paramsCapturados, {
+        //For more details of styles in tables https://github.com/simonbengtsson/jsPDF-AutoTable
+        margin: { top: 90 },
+        theme: "grid",
+        headStyles: { fontSize: 8, halign: "center" },
+        bodyStyles: { fontSize: 8, halign: "center" },
+      });
+      //Table 2
+      let paramsVisual = [
+        {
+          parametro: "Filtro de Aire",
+          valor: vm.itemActual.filtroaire,
+        },
+        {
+          parametro: "Luces",
+          valor: vm.itemActual.lucestyd,
+        },
+        {
+          parametro: "Manguera de Vacío",
+          valor: vm.itemActual.mangueravacio,
+        },
+        {
+          parametro: "Llantas",
+          valor: vm.itemActual.ruedas,
+        },
+        {
+          parametro: "Tapa de Gasolina",
+          valor: vm.itemActual.tapagasolina,
+        },
+        {
+          parametro: "Tapón del Radiador",
+          valor: vm.itemActual.taponradiador,
+        },
+        {
+          parametro: "Tubo de escape",
+          valor: vm.itemActual.tuboescape,
+        },
+      ];
+      var tableHeader1 = [
+        { title: "Parámetro", dataKey: "parametro" },
+        { title: "Valor", dataKey: "valor" },
+      ];
+      doc.autoTable(tableHeader1, paramsVisual, {
+        margin: { top: 30 },
+        theme: "grid",
+        headStyles: { fontSize: 8, halign: "center" },
+        bodyStyles: { fontSize: 8, halign: "center" },
+      });
+      doc.text(
+        "Documento no oficial, válido unicamente para propósitos administrativos dentro del Centro de Verificación Vehicular origen. Los resultados presentados deberán ser validados por alguna entidad verificadora diferente a la origen, por lo que se deberá revisar el status actual de la transacción así como la fecha en la que se genera el presente documento.",
+        15,
+        210,
+        { maxWidth: 180, align: "justify" }
+      );
+
+      var firmaImagen = new Image();
+      firmaImagen.src = firma;
+      if (vm.itemActual.status != "Por validar") {
+        doc.addImage(firmaImagen, "PNG", 70, 240, 60, 20);
+      }
+      doc.setFontSize(12);
+      doc.line(50, 260, 150, 260);
+      doc.text("Ing. Rogelio Sanchez Campos", 70, 265, {
+        maxWidth: 510,
+        align: "justify",
+      });
+
+      doc.save(vm.itemActual.niv + ".pdf");
+      //vm.deposit = {};
     },
     beforeDestroy() {
       if (this.timer !== void 0) {
