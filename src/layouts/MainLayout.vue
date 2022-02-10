@@ -54,9 +54,18 @@
       >
         <div style="height: calc(100% - 117px); padding: 10px">
           <q-toolbar>
-            <q-avatar>
+            <q-avatar size="50px">
               <!--Aqui poner el avatar-->
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              <img v-if="userId == 'CVV_1'" src="../assets/CVV_1.png" />
+              <img v-if="userId == 'CVV_2'" src="../assets/CVV_2.png" />
+              <img v-if="userId == 'CVV_3'" src="../assets/CVV_3.png" />
+              <img v-if="userId == 'CVV_4'" src="../assets/CVV_4.png" />
+              <img v-if="userId == 'CVV_5'" src="../assets/CVV_5.png" />
+              <img v-if="userId == 'CVV_6'" src="../assets/CVV_6.png" />
+              <img v-if="userId == 'CVV_7'" src="../assets/CVV_7.png" />
+              <img v-if="userId == 'CVV_8'" src="../assets/CVV_8.png" />
+              <img v-if="userId == 'CVV_9'" src="../assets/CVV_9.png" />
+              <img v-if="userId == 'CVV_10'" src="../assets/CVV_10.png" />
             </q-avatar>
 
             <q-toolbar-title>{{ userId }}</q-toolbar-title>
@@ -176,7 +185,7 @@ export default {
   methods: {
     logoutNotify() {
       this.$q.notify({
-        message: "Logged out",
+        message: "Saliendo",
       });
     },
   },
@@ -186,7 +195,7 @@ export default {
 <style>
 .q-drawer {
   /*background-image: url(https://demos.creative-tim.com/vue-material-dashboard/img/sidebar-2.32103624.jpg) !important;*/
-  background-image: url("/statics/images/lake.jpg") !important;
+  background-image: url("../assets/image.png") !important;
   background-size: cover !important;
 }
 

@@ -21,14 +21,14 @@
             $q.platform.is.mobile ? { width: '80%' } : { width: '30%' }
           "
         >
-          <q-img src="/statics/images/pharmacy.jpg"></q-img>
-          <q-card-section>
+          <q-img src="../assets/veri.png"></q-img>
+          <q-card-section class=bg-blue-grey-4>
             <q-avatar
               size="74px"
               class="absolute"
               style="top: 0; right: 25px; transform: translateY(-50%)"
             >
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              <img src="../assets/CVV.png"/>
             </q-avatar>
             <div class="row no-wrap items-center">
               <div class="col text-h6 ellipsis">
@@ -36,7 +36,7 @@
               </div>
             </div>
           </q-card-section>
-          <q-card-section>
+          <q-card-section >
             <q-form class="q-gutter-md">
               <q-input filled v-model="username" label="Usuario" lazy-rules />
 
@@ -104,7 +104,12 @@ export default {
   methods: {
     loginNotify() {
       this.$q.notify({
-        message: "Login Successful",
+        message: "Bienvenido",
+      });
+    },
+    errorloginNotify() {
+      this.$q.notify({
+        message: "Usuario o contraseña incorrecto",
       });
     },
     saveStaticDataToFile() {
@@ -146,7 +151,7 @@ export default {
           }
         }
       } else {
-        alert("Usuario o contraseña incorrecto");
+        vm.errorloginNotify();
         vm.password = "";
       }
     },
