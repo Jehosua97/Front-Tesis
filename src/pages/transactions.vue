@@ -201,6 +201,31 @@
                   />
                 </q-td>
               </template>
+              <template v-slot:body-cell-niv="props">
+                <q-td :props="props">
+                  {{ props.row.hologramaObtenido != '--' ? props.row.niv : '--' }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-placas="props">
+                <q-td :props="props">
+                  {{ props.row.hologramaObtenido != '--' ? props.row.placas : '--' }}
+                </q-td>
+              </template>
+               <template v-slot:body-cell-marca="props">
+                <q-td :props="props">
+                  {{ props.row.hologramaObtenido != '--' ? props.row.marca : '--' }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-modelo="props">
+                <q-td :props="props">
+                  {{ props.row.hologramaObtenido != '--' ? props.row.modelo : '--' }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-createdate="props">
+                <q-td :props="props">
+                  {{ props.row.hologramaObtenido != '--' ? props.row.createdate : '--' }}
+                </q-td>
+              </template>
               <template v-slot:body-cell-status="props">
                 <q-td :props="props">
                   <q-chip
@@ -240,8 +265,8 @@
               v-close-popup
             ></q-btn>
           </div>
-          <div class="row q-col-gutter-sm q-ma-xs q-mr-sm">
-            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+          <div  class="row q-col-gutter-sm q-ma-xs q-mr-sm">
+            <div v-if="dataSelected.hologramaObtenido != '--'" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
               <div class="text-h7 q-mt-sm q-mb-xs">
                 Placas: {{ dataSelected.placas }}
               </div>
@@ -255,7 +280,7 @@
                 Modelo:{{ dataSelected.modelo }}
               </div>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+            <div v-if="dataSelected.hologramaObtenido != '--'" class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
               <div class="text-h7 q-mt-sm q-mb-xs">
                 CVV Origen: {{ dataSelected.verificentroid }}
               </div>

@@ -851,9 +851,9 @@ export default {
     si_no() {
       let num = Math.round(Math.random() * 10);
       if (num > 7) {
-        return "No";
+        return "No Cumple";
       } else {
-        return "Si";
+        return "Cumple";
       }
     },
     async insertLedger(token) {
@@ -1106,6 +1106,7 @@ export default {
       ) {
         //Aleatoriedad para los que si tienen multas
         if (Math.round(Math.random() * (10 - 0)) + 0 == 5) {
+        //if (true) {
           console.log("El auto cuenta con multas por pagar");
           this.$q.notify({
             message: "Favor de pagar multas antes de verificar",
